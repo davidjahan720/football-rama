@@ -41,7 +41,7 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies (pinned versions + SHA-256 hashes)
-        run: python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r requirements-dev.txt
+        run: 'python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r requirements-dev.txt'
 
       - name: Tests
         run: python -m pytest
