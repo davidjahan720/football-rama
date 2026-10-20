@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Choix documente :
+  - base-config autorise le HTTP en clair UNIQUEMENT parce que beaucoup de serveurs Xtream Codes ne proposent
+    que http:// (URL saisie par l'utilisateur, hote inconnu au build). L'UI doit afficher un avertissement quand
+    XtreamAccount.isCleartext / CredentialStore.isCleartext est vrai.
+  - Les hebergements possibles du calendrier signe (GitHub Pages, Cloudflare Pages) sont en HTTPS obligatoire.
+    En plus, FixturesClient refuse toute URL non https (ConnectionSpec sans CLEARTEXT) : la protection ne depend
+    pas de cette liste de domaines.
+  - Seules les autorites de certification systeme sont acceptees (pas les CA ajoutees par l'utilisateur).
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <!-- Choix assume (voir ci-dessus) : avertissement lint InsecureBaseConfiguration ignore volontairement. -->
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">github.io</domain>
+        <domain includeSubdomains="true">githubusercontent.com</domain>
+        <domain includeSubdomains="true">pages.dev</domain>
+    </domain-config>
+</network-security-config>

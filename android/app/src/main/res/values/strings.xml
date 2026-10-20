@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr">
+    <string name="app_name">Football Rama</string>
+
+    <!-- Connexion -->
+    <string name="login_subtitle">Les chaînes de votre abonnement IPTV qui diffusent les matchs de Ligue 1, Premier League et Ligue des champions, aujourd’hui et demain.</string>
+    <string name="login_disclaimer">Football Rama ne fournit aucune chaîne. Vos identifiants restent sur cet appareil.</string>
+    <string name="login_cleartext_warning">Votre fournisseur n’utilise pas de connexion chiffrée : vos identifiants circulent en clair sur le réseau. Préférez une adresse https si votre fournisseur la propose.</string>
+    <string name="login_press_back_again">Appuyez de nouveau sur Retour pour quitter.</string>
+    <string name="login_server_label">Adresse du serveur (avec le port)</string>
+    <string name="login_server_placeholder">http://exemple.com:8080</string>
+    <string name="login_username_label">Identifiant</string>
+    <string name="login_password_label">Mot de passe</string>
+    <string name="login_show_password">Afficher</string>
+    <string name="login_hide_password">Masquer</string>
+    <string name="login_advanced_show">Options avancées</string>
+    <string name="login_advanced_hide">Masquer les options avancées</string>
+    <string name="login_submit">Se connecter</string>
+    <string name="login_connecting">Connexion en cours…</string>
+    <string name="login_credentials_extracted">Identifiant et mot de passe repris de l’adresse collée. L’adresse a été simplifiée.</string>
+    <string name="login_error_username">Saisissez votre identifiant.</string>
+    <string name="login_error_password">Saisissez votre mot de passe.</string>
+    <string name="login_error_invalid">Identifiant, mot de passe ou adresse non valide.</string>
+
+    <!-- Adresse du serveur -->
+    <string name="url_error_empty">Saisissez l’adresse du serveur fournie par votre fournisseur IPTV.</string>
+    <string name="url_error_scheme">L’adresse doit commencer par http:// ou https://.</string>
+    <string name="url_error_malformed">Adresse illisible : vérifiez qu’elle ne contient pas d’espace et que le port est correct (exemple : http://exemple.com:8080).</string>
+    <string name="url_error_no_host">Adresse incomplète : le nom du serveur est manquant.</string>
+    <string name="url_error_partial_credentials">L’adresse collée ne contient qu’une partie des identifiants. Saisissez seulement l’adresse du serveur, puis l’identifiant et le mot de passe dans leurs champs.</string>
+    <string name="url_error_unknown_parameters">L’adresse contient des paramètres inconnus. Saisissez seulement l’adresse du serveur et son port (exemple : http://exemple.com:8080).</string>
+    <string name="url_error_stream">Il s’agit d’un lien de chaîne ou de liste, pas de l’adresse du serveur. Saisissez seulement l’adresse et le port (exemple : http://exemple.com:8080).</string>
+
+    <!-- User-Agent (option avancée) -->
+    <string name="ua_label">User-Agent (facultatif)</string>
+    <string name="ua_placeholder">Valeur par défaut</string>
+    <string name="ua_help">À renseigner uniquement si votre fournisseur l’exige. Laissez vide pour la valeur par défaut. Caractères ASCII imprimables, 200 au maximum.</string>
+    <string name="ua_error_too_long">User-Agent trop long : 200 caractères au maximum.</string>
+    <string name="ua_error_characters">User-Agent non valide : utilisez uniquement des caractères ASCII imprimables (sans accent ni retour à la ligne).</string>
+    <string name="ua_save">Enregistrer</string>
+    <string name="ua_reset">Valeur par défaut</string>
+    <string name="ua_saved">User-Agent enregistré. Il sera utilisé à la prochaine mise à jour.</string>
+    <string name="ua_reset_done">User-Agent par défaut rétabli.</string>
+
+    <!-- Erreurs -->
+    <string name="error_not_configured">Le calendrier des matchs n’est pas configuré dans cette version de l’application.</string>
+    <string name="error_no_account">Aucun compte IPTV enregistré.</string>
+    <string name="error_network">Serveur injoignable. Vérifiez l’adresse, le port et la connexion Internet de l’appareil.</string>
+    <string name="error_timeout">Délai dépassé : le serveur ne répond pas. Réessayez dans quelques instants.</string>
+    <string name="error_tls">Connexion sécurisée impossible (certificat non valide ou redirection vers une adresse non chiffrée).</string>
+    <string name="error_auth">Identifiants refusés par le serveur. Vérifiez votre identifiant et votre mot de passe.</string>
+    <string name="error_server">Le serveur de votre fournisseur rencontre un problème. Réessayez plus tard.</string>
+    <string name="error_http">Le serveur a refusé la demande. Vérifiez l’adresse du serveur.</string>
+    <string name="error_not_xtream">Ce serveur ne répond pas comme un serveur Xtream Codes. Vérifiez l’adresse et le port.</string>
+    <string name="error_invalid_response">Réponse inattendue du serveur de votre fournisseur. Réessayez plus tard.</string>
+    <string name="error_too_large">Les données de votre fournisseur dépassent la taille autorisée par l’application.</string>
+    <string name="error_epg_invalid">Le guide TV de votre fournisseur est illisible ou incomplet.</string>
+    <string name="error_fixtures_unavailable">Calendrier des matchs momentanément indisponible.</string>
+    <string name="error_fixtures_expired">Le calendrier des matchs n’a pas été mis à jour récemment. Réessayez plus tard.</string>
+    <string name="error_storage">Espace de stockage insuffisant sur l’appareil.</string>
+    <string name="error_secure_storage">Le stockage sécurisé de l’appareil est indisponible : les identifiants n’ont pas été enregistrés.</string>
+    <string name="error_cancelled">Connexion interrompue.</string>
+    <string name="error_unknown">Une erreur inattendue s’est produite. Réessayez.</string>
+
+    <!-- Mise à jour -->
+    <string name="step_fixtures">téléchargement du calendrier</string>
+    <string name="step_channels">récupération de vos chaînes</string>
+    <string name="step_epg_download">téléchargement du guide TV</string>
+    <string name="step_epg_parse">analyse du guide TV</string>
+    <string name="step_matching">recherche des chaînes</string>
+    <string name="loading_step">Mise à jour en cours : %1$s</string>
+    <string name="loading_step_percent">Mise à jour en cours : %1$s (%2$d %%)</string>
+    <string name="loading_first">Recherche des matchs et des chaînes dans votre guide TV…</string>
+    <string name="updated_just_now">Mis à jour à l’instant</string>
+    <plurals name="updated_minutes_ago">
+        <item quantity="one">Mis à jour il y a %d minute</item>
+        <item quantity="many">Mis à jour il y a %d minutes</item>
+        <item quantity="other">Mis à jour il y a %d minutes</item>
+    </plurals>
+    <plurals name="updated_hours_ago">
+        <item quantity="one">Mis à jour il y a %d heure</item>
+        <item quantity="many">Mis à jour il y a %d heures</item>
+        <item quantity="other">Mis à jour il y a %d heures</item>
+    </plurals>
+    <string name="updated_on">Mis à jour le %1$s</string>
+    <string name="saved_data_line">Données enregistrées · %1$s</string>
+    <string name="showing_previous_data">Données précédentes affichées · %1$s</string>
+    <string name="warning_fixtures_cache">Le calendrier n’a pas pu être vérifié à l’instant : la dernière version valide est utilisée.</string>
+    <string name="retry">Réessayer</string>
+    <string name="not_configured_title">Calendrier des matchs non configuré</string>
+    <string name="not_configured_body">Cette version de l’application ne contient pas l’adresse ou la clé de vérification du calendrier. Installez une version officielle de Football Rama.</string>
+
+    <!-- Matchs -->
+    <string name="section_today">Aujourd’hui</string>
+    <string name="section_tomorrow">Demain</string>
+    <string name="section_empty">Aucun match ce jour-là.</string>
+    <string name="empty_no_match">Aucun match de Ligue 1, Premier League ou Ligue des champions aujourd’hui ni demain</string>
+    <string name="filter_all">Tous</string>
+    <string name="match_teams">%1$s – %2$s</string>
+    <string name="not_found_in_guide">Non trouvé dans votre guide TV</string>
+    <string name="score_fort">Confirmé</string>
+    <string name="score_moyen">Probable</string>
+    <plurals name="match_count">
+        <item quantity="one">%d match</item>
+        <item quantity="many">%d matchs</item>
+        <item quantity="other">%d matchs</item>
+    </plurals>
+    <plurals name="channel_count">
+        <item quantity="one">%d chaîne</item>
+        <item quantity="many">%d chaînes</item>
+        <item quantity="other">%d chaînes</item>
+    </plurals>
+    <plurals name="variant_count">
+        <item quantity="one">%d variante</item>
+        <item quantity="many">%d variantes</item>
+        <item quantity="other">%d variantes</item>
+    </plurals>
+    <string name="variants_with_tags">%1$s (%2$s)</string>
+
+    <!-- Détail -->
+    <string name="back">Retour</string>
+    <string name="detail_when">%1$s · %2$s</string>
+    <string name="detail_missing">Ce match n’est plus dans la liste. Revenez à la liste des matchs.</string>
+    <string name="detail_filter_active">Filtre pays actif : %1$s</string>
+    <string name="detail_none_for_country">Aucune chaîne de ce pays pour ce match</string>
+    <string name="detail_not_found_help">Aucun programme correspondant à ce match n’a été trouvé dans le guide TV de votre fournisseur. Le guide peut être incomplet ou publié plus tard.</string>
+    <string name="detail_country_header">%1$s (%2$d)</string>
+
+    <!-- Pays (préfixes courants des listes IPTV) -->
+    <string name="country_fr">France</string>
+    <string name="country_uk">Royaume-Uni</string>
+    <string name="country_be">Belgique</string>
+    <string name="country_ch">Suisse</string>
+    <string name="country_lu">Luxembourg</string>
+    <string name="country_ca">Canada</string>
+    <string name="country_de">Allemagne</string>
+    <string name="country_es">Espagne</string>
+    <string name="country_it">Italie</string>
+    <string name="country_pt">Portugal</string>
+    <string name="country_nl">Pays-Bas</string>
+    <string name="country_ie">Irlande</string>
+    <string name="country_us">États-Unis</string>
+    <string name="country_at">Autriche</string>
+    <string name="country_pl">Pologne</string>
+    <string name="country_tr">Turquie</string>
+    <string name="country_ma">Maroc</string>
+    <string name="country_dz">Algérie</string>
+    <string name="country_tn">Tunisie</string>
+    <string name="country_arabic">Chaînes arabes</string>
+    <string name="country_africa">Afrique</string>
+    <string name="country_se">Suède</string>
+    <string name="country_no">Norvège</string>
+    <string name="country_dk">Danemark</string>
+    <string name="country_other">Autres</string>
+
+    <!-- Réglages -->
+    <string name="settings_title">Réglages</string>
+    <string name="settings_last_update">Dernière mise à jour</string>
+    <string name="settings_never">Jamais</string>
+    <string name="settings_refresh_now">Actualiser maintenant</string>
+    <string name="sign_out">Se déconnecter</string>
+    <string name="sign_out_confirm_title">Se déconnecter ?</string>
+    <string name="sign_out_confirm_body">Vos identifiants, les résultats enregistrés et les réglages seront effacés de cet appareil.</string>
+    <string name="sign_out_confirm">Se déconnecter et tout effacer</string>
+    <string name="cancel">Annuler</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="mention_neutral">Football Rama est un outil neutre : il ne fournit, ne diffuse et ne lit aucune chaîne ni aucune vidéo. Il indique seulement quelles chaînes de votre propre abonnement IPTV diffusent les matchs, d’après le guide TV de votre fournisseur.</string>
+    <string name="mention_privacy">Aucune donnée n’est envoyée à un serveur Football Rama. Vos identifiants sont chiffrés sur cet appareil et ne sont transmis qu’au serveur de votre fournisseur. Le calendrier des matchs est un fichier public signé, téléchargé sans identifiant ni information de compte.</string>
+    <string name="mention_attribution_intro">Calendrier des matchs :</string>
+</resources>

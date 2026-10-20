@@ -1,0 +1,31 @@
+{
+  "_comment": "Surnoms absents de football-data. Cle = nom d'equipe normalise sans STOP_WORDS (ni annee de fondation). Valeurs deja normalisees (voir docs/CONTRAT_FIXTURES.md). Verifie au chargement.",
+  "version": 1,
+  "aliases": {
+    "paris saint germain": ["psg", "paris sg"],
+    "marseille": ["om", "marseille"],
+    "lyonnais": ["ol", "lyon"],
+    "lille osc": ["losc", "lille"],
+    "manchester united": ["man utd", "man united", "manchester utd"],
+    "manchester city": ["man city"],
+    "tottenham hotspur": ["spurs", "tottenham"],
+    "wolverhampton wanderers": ["wolves"],
+    "brighton hove albion": ["brighton"],
+    "nottingham forest": ["nottm forest", "forest"],
+    "newcastle united": ["newcastle"],
+    "west ham united": ["west ham"],
+    "bayern munchen": ["bayern", "bayern munich"],
+    "internazionale milano": ["inter", "inter milan", "internazionale"],
+    "barcelona": ["barca", "barcelone"],
+    "atletico madrid": ["atletico", "atl madrid"],
+    "real madrid": ["real madrid"],
+    "borussia dortmund": ["dortmund", "bvb"],
+    "bayer 04 leverkusen": ["leverkusen"],
+    "juventus": ["juve"],
+    "milan": ["ac milan"],
+    "napoli": ["naples"],
+    "aek": ["aek athens", "aek athenes", "aek athen", "aek"],
+    "psv": ["psv eindhoven", "psv"],
+    "slavia praha": ["slavia prague", "slavia praga", "slavia praag", "slavia"]
+  }
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icone adaptative (108x108, zone sure = cercle de 66 dp au centre) : ecran + terrain stylise. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M30,36 L78,36 L78,68 L30,68 Z" android:strokeColor="#FFECEFF2" android:strokeWidth="3" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M37.68,42.4 L70.32,42.4 L70.32,61.6 L37.68,61.6 Z" android:strokeColor="#FFFFC233" android:strokeWidth="2.4000000000000004" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M54,42.4 L54,61.6" android:strokeColor="#FFFFC233" android:strokeWidth="2.4000000000000004" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M50.16,52 A3.84,3.84 0 1,0 57.84,52 A3.84,3.84 0 1,0 50.16,52 Z" android:strokeColor="#FFFFC233" android:strokeWidth="2.4000000000000004" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M44.4,74.6 L63.6,74.6" android:strokeColor="#FFECEFF2" android:strokeWidth="3" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+</vector>

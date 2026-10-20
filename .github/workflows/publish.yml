@@ -1,0 +1,75 @@
+# Publishes the signed calendar (fixtures.json + fixtures.json.sig) to GitHub Pages.
+# Contract: docs/CONTRAT_FIXTURES.md. Publisher: publisher/README.md.
+#
+# Required settings:
+#   - Secrets   : FOOTBALL_DATA_TOKEN, FIXTURES_SIGNING_KEY
+#   - Variable  : FIXTURES_PUBLIC_KEY (must match the key embedded in the Android app)
+#   - Pages     : Settings > Pages > Source = "GitHub Actions"
+name: Publish fixtures
+
+on:
+  schedule:
+    # Every 3 hours (minute 17 to avoid the top-of-hour congestion of GitHub cron).
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+# Least privilege by default; the deploy job raises only what it needs.
+permissions:
+  contents: read
+
+# Never two publications at the same time; a queued run waits instead of cancelling a deployment.
+concurrency:
+  group: publish-fixtures
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: publisher
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies (pinned versions + SHA-256 hashes)
+        run: python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r requirements-dev.txt
+
+      - name: Tests
+        run: python -m pytest
+
+      - name: Publish (fetch, sign, verify)
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+          FIXTURES_SIGNING_KEY: ${{ secrets.FIXTURES_SIGNING_KEY }}
+          FIXTURES_PUBLIC_KEY: ${{ vars.FIXTURES_PUBLIC_KEY }}
+          SITE_DIR: ${{ runner.temp }}/site
+        run: python -m football_rama_publisher publish --out "$SITE_DIR" --verify-key "$FIXTURES_PUBLIC_KEY"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

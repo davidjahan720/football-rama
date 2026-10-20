@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Banniere Android TV 320x180 : sobre, sans logo de club ni de chaine. Lettrage dessine en traits (aucune police embarquee). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="VectorRaster"
+    android:width="320dp" android:height="180dp" android:viewportWidth="320" android:viewportHeight="180">
+    <path android:pathData="M0,0 L320,0 L320,180 L0,180 Z" android:fillColor="#FF101418" />
+    <path android:pathData="M0,0 L8,0 L8,180 L0,180 Z" android:fillColor="#FFFFC233" />
+    <path android:pathData="M28,58 L100,58 L100,108 L28,108 Z" android:strokeColor="#FFECEFF2" android:strokeWidth="4" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M39.52,68 L88.48,68 L88.48,98 L39.52,98 Z" android:strokeColor="#FFFFC233" android:strokeWidth="3.2" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M64,68 L64,98" android:strokeColor="#FFFFC233" android:strokeWidth="3.2" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M58,83 A6,6 0 1,0 70,83 A6,6 0 1,0 58,83 Z" android:strokeColor="#FFFFC233" android:strokeWidth="3.2" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M49.6,116.8 L78.4,116.8" android:strokeColor="#FFECEFF2" android:strokeWidth="4" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M120,78 L120,52 L135.6,52 M120,65 L131.7,65 M142.1,52 L157.7,52 L157.7,78 L142.1,78 L142.1,52 M164.2,52 L179.8,52 L179.8,78 L164.2,78 L164.2,52 M186.3,52 L201.9,52 M194.1,52 L194.1,78 M208.4,52 L208.4,78 L221.4,78 L224,75.4 L224,67.6 L221.4,65 L208.4,65 M208.4,52 L220.1,52 L222.7,54.6 L222.7,62.4 L220.1,65 M230.5,78 L230.5,57.2 L235.7,52 L240.9,52 L246.1,57.2 L246.1,78 M230.5,67.6 L246.1,67.6 M252.6,52 L252.6,78 L268.2,78 M274.7,52 L274.7,78 L290.3,78" android:strokeColor="#FFECEFF2" android:strokeWidth="4.2" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+    <path android:pathData="M120,126 L120,100 L133,100 L135.6,102.6 L135.6,110.4 L133,113 L120,113 M127.8,113 L135.6,126 M142.1,126 L142.1,105.2 L147.3,100 L152.5,100 L157.7,105.2 L157.7,126 M142.1,115.6 L157.7,115.6 M164.2,126 L164.2,100 L172,113 L179.8,100 L179.8,126 M186.3,126 L186.3,105.2 L191.5,100 L196.7,100 L201.9,105.2 L201.9,126 M186.3,115.6 L201.9,115.6" android:strokeColor="#FFFFC233" android:strokeWidth="4.2" android:strokeLineCap="square" android:strokeLineJoin="miter" android:fillColor="#00000000" />
+</vector>

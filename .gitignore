@@ -1,0 +1,34 @@
+.env
+cache/
+output/
+__pycache__/
+
+# Publisher
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Android
+android/.gradle/
+android/build/
+android/*/build/
+android/local.properties
+android/.kotlin/
+android/.idea/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Secrets et cles (audit securite) : ne jamais committer
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+keystore.properties
+signing.properties
+.claude/settings.local.json
+*.log

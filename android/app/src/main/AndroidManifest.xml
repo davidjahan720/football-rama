@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Seule permission : acces reseau (serveur IPTV de l'utilisateur + fichier de calendrier signe). -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Android TV (Formuler Z11 Pro) sans exclure les autres appareils. -->
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <application
+        android:name=".FootballRamaApp"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:banner="@drawable/banner"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FootballRama"
+        tools:targetApi="37">
+
+        <!-- Activite unique, exportee uniquement pour les lanceurs (aucun deep link, aucune donnee d'Intent lue). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Durcissement : recepteurs exportes de bibliotheques (proteges par DUMP, reserves au debogage adb)
+             retires. Seul SystemJobService (WorkManager, protege par BIND_JOB_SERVICE) reste exporte en plus
+             de l'activite du lanceur, car JobScheduler l'exige. -->
+        <receiver
+            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+            tools:node="remove"
+            tools:ignore="MissingClass" />
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            tools:node="remove"
+            tools:ignore="MissingClass" />
+    </application>
+</manifest>
