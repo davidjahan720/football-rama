@@ -13,6 +13,7 @@ import fr.footballrama.core.matching.MatchReport
 import fr.footballrama.core.matching.MatchReportCodec
 import fr.footballrama.core.xtream.XtreamClient
 import fr.footballrama.core.xtream.XtreamException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -96,6 +97,13 @@ class MatchRepository(
                 doRefresh()
             } catch (e: RefreshFailure) {
                 RefreshState.Error(e.error, readReport())
+            } catch (e: CancellationException) {
+                _state.value = readReport()?.let { RefreshState.Error(RefreshError.UNKNOWN, it) } ?: RefreshState.Idle
+                activeRefresh = null
+                throw e
+            } catch (e: Throwable) {
+                // Toute erreur imprevue (bug, OOM...) doit sortir l'UI de l'etat Loading, sinon l'ecran reste fige
+                RefreshState.Error(RefreshError.UNKNOWN, readReport())
             }
             _state.value = result
             activeRefresh = null

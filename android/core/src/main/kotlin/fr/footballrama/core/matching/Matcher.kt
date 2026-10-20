@@ -54,7 +54,8 @@ data class MatchResult(
 
 object ChannelNames {
     private val QUALITY_TAGS =
-        Regex("""(?iU)\b(?:FHD|UHD|HD|SD|LQ|HQ|4K|8K|HEVC|H265|50FPS|60FPS|RAW|BACKUP)\b""")
+        // Pas de flag inline U (Unicode) : non supporte par le moteur regex d'Android (ICU), crash au chargement de la classe
+        Regex("""(?i)\b(?:FHD|UHD|HD|SD|LQ|HQ|4K|8K|HEVC|H265|50FPS|60FPS|RAW|BACKUP)\b""")
     private val MULTI_SPACE = Regex("""\s{2,}""")
     private val COUNTRY_PREFIX = Regex("""^[^A-Za-z0-9|]*\|\s*([A-Za-z]{2,4})\s*\|\s*""")
 
@@ -165,7 +166,8 @@ class Matcher(private val fixtures: Fixtures) {
         private val COVER = Duration.ofHours(6)
 
         // "\s+(-|–|—|v|vs|x|/)\.?\s+", insensible a la casse ; prefixe "LIVE: UCL: " retire.
-        private val TEAM_SEPARATOR = Regex("""(?iU)\s+(?:-|–|—|v|vs|x|/)\.?\s+""")
+        // Espaces Unicode listes explicitement : le flag inline U n existe pas sur Android (ICU)
+        private val TEAM_SEPARATOR = Regex("""(?i)[\s   ]+(?:-|–|—|v|vs|x|/)\.?[\s   ]+""")
         private val TITLE_PREFIX = Regex("""^.*:\s+""")
 
         /** `foreign_team_in_title` : "A - B" dont un des 2 premiers cotes n'est aucune des equipes du match. */
