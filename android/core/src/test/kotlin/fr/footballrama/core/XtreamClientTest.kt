@@ -104,6 +104,24 @@ class XtreamClientTest {
     }
 
     @Test
+    fun `authenticate - seul user_info auth 1 et statut actif sont acceptes`() {
+        server.enqueue(MockResponse.Builder().body("""{"user_info":{"auth":1,"status":"Active"},"server_info":{}}""").build())
+        client.authenticate(account)
+        val req = server.takeRequest()
+        assertEquals("/player_api.php", req.url.encodedPath)
+        assertNull(req.url.queryParameter("action"))
+        // Mauvais mot de passe : panels qui repondent [] (200), {} , auth 0, corps vide, compte expire, HTML
+        for (body in listOf("[]", "{}", """{"user_info":{"auth":0}}""", "", """{"user_info":{"auth":"1","status":"Expired"}}""", "<html>x</html>")) {
+            server.enqueue(MockResponse.Builder().body(body).build())
+            assertEquals(Kind.AUTH, assertThrows<XtreamException> { client.authenticate(account) }.kind, body)
+        }
+        server.enqueue(MockResponse.Builder().body("""{"user_info":{"auth":"1"}}""").build())
+        client.authenticate(account) // statut absent : accepte
+        server.enqueue(MockResponse.Builder().code(503).build())
+        assertEquals(Kind.SERVER, assertThrows<XtreamException> { client.authenticate(account) }.kind)
+    }
+
+    @Test
     fun `reponses invalides et trop grosses`() {
         server.enqueue(MockResponse.Builder().body("<html>erreur</html>").build())
         assertEquals(Kind.INVALID_RESPONSE, assertThrows<XtreamException> { client.getLiveStreams(account) }.kind)

@@ -101,6 +101,29 @@ class XtreamClient(
         .retryOnConnectionFailure(true)
         .build()
 
+    /**
+     * Verifie les identifiants via `player_api.php` sans action (reponse `{"user_info":{"auth":1,"status":"Active"}}`).
+     * Ne pas se contenter de get_live_categories : certains panels y repondent `[]` (200) meme avec un mauvais
+     * mot de passe, puis refusent get_live_streams (constate sur boitier reel).
+     */
+    fun authenticate(account: XtreamAccount) {
+        val url = account.serverUrl.newBuilder()
+            .addPathSegment("player_api.php")
+            .addQueryParameter("username", account.username)
+            .addQueryParameter("password", account.password)
+            .build()
+        execute(url, API_CALL_TIMEOUT_S) { body ->
+            val text = LimitedInputStream(maybeGunzip(body.stream, AUTH_MAX_BYTES), AUTH_MAX_BYTES).readBytes()
+                .toString(Charsets.UTF_8).trim().removePrefix("﻿")
+            val obj = runCatching { JSON.decodeFromString(JsonObject.serializer(), text) }.getOrNull()
+                ?: throw XtreamException(XtreamException.Kind.AUTH) // corps vide, [] ou HTML : pas d'acces
+            val info = obj["user_info"] as? JsonObject ?: throw XtreamException(XtreamException.Kind.AUTH)
+            if (info.str("auth") != "1") throw XtreamException(XtreamException.Kind.AUTH)
+            val status = info.str("status")?.trim()?.lowercase()
+            if (status != null && status != "active") throw XtreamException(XtreamException.Kind.AUTH)
+        }
+    }
+
     fun getLiveCategories(account: XtreamAccount): List<LiveCategory> =
         execute(apiUrl(account, "get_live_categories"), API_CALL_TIMEOUT_S) { body ->
             val out = ArrayList<LiveCategory>()
@@ -289,6 +312,7 @@ class XtreamClient(
 
     companion object {
         private const val API_CALL_TIMEOUT_S = 120L
+        private const val AUTH_MAX_BYTES = 1024L * 1024
         private const val EPG_CALL_TIMEOUT_S = 15 * 60L
         private val JSON = Json { ignoreUnknownKeys = true; isLenient = false }
     }

@@ -79,6 +79,7 @@ fun MatchesScreen(
     onOpenMatch: (Long) -> Unit,
     onOpenSettings: () -> Unit,
     updateBanner: @Composable () -> Unit = {},
+    onChangeAccount: () -> Unit = {},
 ) {
     // Cible de focus a l'entree : element restaure, sinon premiere carte, sinon bouton Reglages.
     val firstCard = (sections.today + sections.tomorrow).firstOrNull()?.let { matchFocusKey(it.fixtureId) }
@@ -130,12 +131,12 @@ fun MatchesScreen(
             Spacer(Modifier.height(8.dp))
         }
 
-        StatusArea(state = state, report = report, now = now, onRetry = onRetry)
+        StatusArea(state = state, report = report, now = now, onRetry = onRetry, onChangeAccount = onChangeAccount)
         updateBanner()
 
         Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(top = 8.dp)) {
             when {
-                report == null -> NoDataState(state, onRetry)
+                report == null -> NoDataState(state, onRetry, onChangeAccount)
                 sections.isEmpty -> CenterMessage(stringResource(R.string.empty_no_match))
                 else -> LazyColumn(
                     state = listState,
@@ -273,7 +274,7 @@ private fun CountryChip(label: String, selected: Boolean, onClick: () -> Unit) {
 
 /** Bandeau d'etat : chargement, avertissement, erreur ; ligne "Mis a jour il y a..." sinon. */
 @Composable
-private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, onRetry: () -> Unit) {
+private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, onRetry: () -> Unit, onChangeAccount: () -> Unit) {
     val updated = report?.let { updatedText(ageOf(Instant.ofEpochMilli(it.updatedAtMillis), now)) }
     when (state) {
         is RefreshState.Loading -> {
@@ -293,7 +294,10 @@ private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, 
                     kind = BannerKind.ERROR,
                     text = stringResource(Messages.refreshError(state.type)),
                     secondary = updated?.let { stringResource(R.string.showing_previous_data, it) },
-                    action = if (state.type.canRetry()) {
+                    action = if (state.type == RefreshError.AUTH) {
+                        // Identifiants refuses : reessayer ne sert a rien, il faut pouvoir les ressaisir
+                        { FrButton(stringResource(R.string.change_account), onClick = onChangeAccount) }
+                    } else if (state.type.canRetry()) {
                         { FrButton(stringResource(R.string.retry), onClick = onRetry) }
                     } else {
                         null
@@ -317,7 +321,7 @@ private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, 
 internal fun RefreshError.canRetry(): Boolean = this != RefreshError.NOT_CONFIGURED && this != RefreshError.NO_ACCOUNT
 
 @Composable
-private fun NoDataState(state: RefreshState, onRetry: () -> Unit) {
+private fun NoDataState(state: RefreshState, onRetry: () -> Unit, onChangeAccount: () -> Unit) {
     when (state) {
         is RefreshState.Error -> {
             if (state.type == RefreshError.NOT_CONFIGURED) {
@@ -335,7 +339,10 @@ private fun NoDataState(state: RefreshState, onRetry: () -> Unit) {
                         textAlign = TextAlign.Center,
                         modifier = Modifier.widthIn(max = 640.dp),
                     )
-                    if (state.type.canRetry()) {
+                    if (state.type == RefreshError.AUTH) {
+                        Spacer(Modifier.height(16.dp))
+                        FrButton(stringResource(R.string.change_account), onClick = onChangeAccount, primary = true)
+                    } else if (state.type.canRetry()) {
                         Spacer(Modifier.height(16.dp))
                         FrButton(stringResource(R.string.retry), onClick = onRetry, primary = true)
                     }

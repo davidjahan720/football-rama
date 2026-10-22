@@ -29,7 +29,7 @@ class LoginService(private val container: AppContainer) {
             is LoginInput.Result.Ready -> r
         }
         return try {
-            withContext(Dispatchers.IO) { container.xtreamClient.getLiveCategories(ready.account) }
+            withContext(Dispatchers.IO) { container.xtreamClient.authenticate(ready.account) }
             container.signIn(ready.serverUrl, ready.username, ready.password)
             Outcome.Success
         } catch (e: CancellationException) {

@@ -114,6 +114,7 @@
     <string name="showing_previous_data">Données précédentes affichées · %1$s</string>
     <string name="warning_fixtures_cache">Le calendrier n’a pas pu être vérifié à l’instant : la dernière version valide est utilisée.</string>
     <string name="retry">Réessayer</string>
+    <string name="change_account">Modifier mes identifiants</string>
     <string name="not_configured_title">Calendrier des matchs non configuré</string>
     <string name="not_configured_body">Cette version de l’application ne contient pas l’adresse ou la clé de vérification du calendrier. Installez une version officielle de Football Rama.</string>
 

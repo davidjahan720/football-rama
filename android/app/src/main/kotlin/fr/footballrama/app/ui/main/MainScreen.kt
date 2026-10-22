@@ -78,6 +78,7 @@ fun MainScreen(vm: MainViewModel) {
                 screen = Screen.SETTINGS
             },
             updateBanner = { UpdateBanner(updateState) },
+            onChangeAccount = vm::signOut,
         )
         Screen.DETAIL -> DetailScreen(
             match = report?.matches?.firstOrNull { it.fixtureId == selectedId },
