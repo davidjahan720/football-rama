@@ -11,8 +11,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.footballrama.app.FootballRamaApp
+import fr.footballrama.app.ui.logic.availableCompetitions
 import fr.footballrama.app.ui.logic.availableCountries
 import fr.footballrama.app.ui.logic.effectiveFilter
+import fr.footballrama.app.ui.logic.filterByCompetition
 import fr.footballrama.app.ui.logic.splitByDay
 import java.time.ZoneId
 
@@ -37,6 +39,7 @@ fun MainScreen(vm: MainViewModel) {
     val report by vm.report.collectAsStateWithLifecycle()
     val now by vm.now.collectAsStateWithLifecycle()
     val storedFilter by vm.countryFilter.collectAsStateWithLifecycle()
+    val storedCompetition by vm.competitionFilter.collectAsStateWithLifecycle()
     val labeler = rememberCountryLabeler()
     // Bandeau "mise a jour disponible" : l'installation se fait depuis les Reglages
     val updateState by (LocalContext.current.applicationContext as FootballRamaApp).container
@@ -45,7 +48,11 @@ fun MainScreen(vm: MainViewModel) {
     val zone = ZoneId.systemDefault()
     // Recalcul chaque minute : passage a minuit et matchs termines masques (2 h 30 apres le coup d'envoi).
     val minute = now.epochSecond / 60
-    val sections = remember(report, minute, zone) { splitByDay(report?.matches.orEmpty(), now, zone) }
+    val allSections = remember(report, minute, zone) { splitByDay(report?.matches.orEmpty(), now, zone) }
+    // Filtre competition (masque des matchs), puis filtre pays (masque des chaines) : combinables.
+    val competitions = remember(allSections) { availableCompetitions(allSections.today + allSections.tomorrow) }
+    val competition = effectiveFilter(storedCompetition, competitions)
+    val sections = remember(allSections, competition) { filterByCompetition(allSections, competition) }
     val countries = remember(sections, labeler) { availableCountries(sections.today + sections.tomorrow, labeler) }
     val filter = effectiveFilter(storedFilter, countries)
 
@@ -59,6 +66,9 @@ fun MainScreen(vm: MainViewModel) {
             report = report,
             sections = sections,
             now = now,
+            competitions = competitions,
+            competition = competition,
+            onCompetition = vm::setCompetitionFilter,
             countries = countries,
             filter = filter,
             labeler = labeler,

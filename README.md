@@ -1,6 +1,6 @@
 # Football_Rama — prototype EPG
 
-Objectif : vérifier si l'EPG d'un accès IPTV Xtream suffit pour savoir quelles chaînes diffusent les matchs de Ligue 1, Premier League et Ligue des champions.
+Objectif : vérifier si l'EPG d'un accès IPTV Xtream suffit pour savoir quelles chaînes diffusent les matchs des grands championnats européens et de la Ligue des champions (prototype `scripts/poc_epg.py` validé sur Ligue 1, Premier League et Ligue des champions ; 6 championnats ajoutés le 2026-10-22, voir `docs/CONTRAT_FIXTURES.md`).
 
 ## Installation
 

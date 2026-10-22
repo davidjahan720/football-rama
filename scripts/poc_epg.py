@@ -6,6 +6,11 @@ Usage :
     py scripts/poc_epg.py --days 5     # fenetre de matchs (max 10, limite football-data)
 
 Aucun identifiant n'est affiche ni ecrit dans les rapports.
+
+Depuis le 2026-10-22, les listes de ce prototype (competitions, mots-cles, mots exclus, mots generiques, surnoms)
+sont FIGEES sur les 3 competitions validees le 2026-10-20. La source de verite est le publisher
+(publisher/football_rama_publisher/aliases.py + aliases.json). L'algorithme (match, foreign_team_in_title) reste
+la reference : publisher/tests/test_competitions.py l'execute avec les listes du publisher.
 """
 from __future__ import annotations
 

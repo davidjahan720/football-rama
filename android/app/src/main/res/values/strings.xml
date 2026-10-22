@@ -3,7 +3,7 @@
     <string name="app_name">Matchs &amp; Chaînes</string>
 
     <!-- Connexion -->
-    <string name="login_subtitle">Les chaînes de votre abonnement IPTV qui diffusent les matchs de Ligue 1, Premier League et Ligue des champions, aujourd’hui et demain.</string>
+    <string name="login_subtitle">Les chaînes de votre abonnement IPTV qui diffusent les matchs des grands championnats européens et de la Ligue des champions, aujourd’hui et demain.</string>
     <string name="login_disclaimer">Matchs &amp; Chaînes ne fournit aucune chaîne. Vos identifiants restent sur cet appareil.</string>
     <string name="login_cleartext_warning">Votre fournisseur n’utilise pas de connexion chiffrée : vos identifiants circulent en clair sur le réseau. Préférez une adresse https si votre fournisseur la propose.</string>
     <string name="login_press_back_again">Appuyez de nouveau sur Retour pour quitter.</string>
@@ -124,8 +124,11 @@
     <string name="section_today">Aujourd’hui</string>
     <string name="section_tomorrow">Demain</string>
     <string name="section_empty">Aucun match ce jour-là.</string>
-    <string name="empty_no_match">Aucun match de Ligue 1, Premier League ou Ligue des champions aujourd’hui ni demain</string>
+    <string name="empty_no_match">Aucun match des grands championnats européens ou de la Ligue des champions aujourd’hui ou demain</string>
     <string name="filter_all">Tous</string>
+    <string name="filter_all_competitions">Toutes</string>
+    <string name="filter_competition_label">Compétition</string>
+    <string name="filter_country_label">Pays</string>
     <string name="match_teams">%1$s – %2$s</string>
     <string name="not_found_in_guide">Non trouvé dans votre guide TV</string>
     <string name="score_fort">Confirmé</string>

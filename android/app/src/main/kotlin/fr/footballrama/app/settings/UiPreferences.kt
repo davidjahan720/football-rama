@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 
 /**
- * Reglages non sensibles (User-Agent avance, filtre pays). SharedPreferences privees, exclues des
+ * Reglages non sensibles (User-Agent avance, filtres pays et competition). SharedPreferences privees, exclues des
  * sauvegardes (allowBackup=false + dataExtractionRules). Le User-Agent est revalide a la lecture.
  */
 class UiPreferences(context: Context) {
@@ -40,6 +40,13 @@ class UiPreferences(context: Context) {
             prefs.edit { if (value == null) remove(KEY_COUNTRY) else putString(KEY_COUNTRY, value.take(100)) }
         }
 
+    /** Filtre competition memorise (code football-data, ex. "BL1"), null = toutes. */
+    var competitionFilter: String?
+        get() = prefs.getString(KEY_COMPETITION, null)?.takeIf { it.length <= 100 }
+        set(value) {
+            prefs.edit { if (value == null) remove(KEY_COMPETITION) else putString(KEY_COMPETITION, value.take(100)) }
+        }
+
     /** "Se deconnecter" : efface aussi les reglages. */
     fun clear() {
         prefs.edit { clear() }
@@ -50,6 +57,7 @@ class UiPreferences(context: Context) {
         const val FILE = "ui_settings"
         const val KEY_UA = "user_agent"
         const val KEY_COUNTRY = "country_filter"
+        const val KEY_COMPETITION = "competition_filter"
     }
 }
 

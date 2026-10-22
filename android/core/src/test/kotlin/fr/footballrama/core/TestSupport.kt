@@ -15,16 +15,29 @@ import java.util.Base64
  * au format du contrat a partir de noms d'equipes football-data.
  */
 object TestAliases {
-    val COMPETITIONS = mapOf("PL" to "Premier League", "FL1" to "Ligue 1", "CL" to "Ligue des champions")
+    val COMPETITIONS = mapOf(
+        "PL" to "Premier League", "FL1" to "Ligue 1", "CL" to "Ligue des champions",
+        "BL1" to "Bundesliga", "SA" to "Serie A", "PD" to "LaLiga", "DED" to "Eredivisie",
+        "PPL" to "Liga Portugal", "ELC" to "Championship",
+    )
     val COMPETITION_KEYWORDS = mapOf(
         "PL" to listOf("premier league", "epl"),
         "FL1" to listOf("ligue 1", "ligue1", "mcdonald"),
         "CL" to listOf("champions league", "ligue des champions", "uefa champions", "ucl", "liga de campeones", "champions"),
+        "BL1" to listOf("bundesliga", "1 bundesliga"),
+        "SA" to listOf("serie a", "lega serie a", "serie a tim", "serie a enilive", "calcio"),
+        "PD" to listOf("laliga", "la liga", "liga espanola", "liga ea sports", "laliga ea sports"),
+        "DED" to listOf("eredivisie"),
+        "PPL" to listOf("liga portugal", "primeira liga", "liga betclic", "liga portugal betclic"),
+        "ELC" to listOf("efl championship", "sky bet championship", "skybet championship", "efl"),
     )
     val EXCLUDED_TITLE_WORDS = listOf(
         "youth league", "u19", "u21", "u23", "women", "womens", "feminin", "feminine", "femenino",
         "frauen", "wsl", "highlights", "resume", "resumen", "replay", "rediffusion", "rediff",
         "magazine", "best of", "golos", "goals", "talk", "preview", "avant match", "debrief",
+        "vrouwen", "femminile", "feminino",
+        "2 bundesliga", "serie b", "laliga hypermotion", "laliga 2", "la liga 2", "segunda division",
+        "liga portugal 2", "eerste divisie", "keuken kampioen", "league one", "league two", "ligue 2",
     )
     private val STOP_WORDS = setOf(
         "fc", "afc", "sc", "ac", "as", "cf", "club", "de", "du", "la", "le", "the", "and", "football",
@@ -36,34 +49,21 @@ object TestAliases {
         "dynamo", "dinamo", "manchester", "madrid", "milano", "london", "lisboa", "glasgow", "sheffield",
         "bristol", "hotspur", "wanderers", "albion", "rovers", "county", "town", "sport", "sports",
         "calcio", "football", "futbol", "olympique", "sporting", "club", "young", "boys", "1907", "paris",
+        "barcelona", "munchen", "berlin", "eintracht", "fortuna", "rotterdam", "sparta", "excelsior", "eagles",
+        "portugal", "clube", "vitoria", "nacional", "deportivo", "sociedad", "balompie", "sportiva", "unione",
+        "wednesday", "north", "derby", "rangers", "queens",
     )
-    private val EXTRA = mapOf(
-        "paris saint germain" to listOf("psg", "paris sg"),
-        "marseille" to listOf("om", "marseille"),
-        "lyonnais" to listOf("ol", "lyon"),
-        "lille osc" to listOf("losc", "lille"),
-        "manchester united" to listOf("man utd", "man united", "manchester utd"),
-        "manchester city" to listOf("man city"),
-        "tottenham hotspur" to listOf("spurs", "tottenham"),
-        "wolverhampton wanderers" to listOf("wolves"),
-        "brighton hove albion" to listOf("brighton"),
-        "nottingham forest" to listOf("nottm forest", "forest"),
-        "newcastle united" to listOf("newcastle"),
-        "west ham united" to listOf("west ham"),
-        "bayern munchen" to listOf("bayern", "bayern munich"),
-        "internazionale milano" to listOf("inter", "inter milan", "internazionale"),
-        "barcelona" to listOf("barca", "barcelone"),
-        "atletico madrid" to listOf("atletico", "atl madrid"),
-        "real madrid" to listOf("real madrid"),
-        "borussia dortmund" to listOf("dortmund", "bvb"),
-        "bayer 04 leverkusen" to listOf("leverkusen"),
-        "juventus" to listOf("juve"),
-        "milan" to listOf("ac milan"),
-        "napoli" to listOf("naples"),
-        "aek" to listOf("aek athens", "aek athenes", "aek athen", "aek"),
-        "psv" to listOf("psv eindhoven", "psv"),
-        "slavia praha" to listOf("slavia prague", "slavia praga", "slavia praag", "slavia"),
-    )
+
+    /** Fichier du publisher lu directement (une seule source de verite pour les surnoms). */
+    val ALIASES_FILE = java.io.File("../../publisher/football_rama_publisher/aliases.json")
+
+    private val EXTRA: Map<String, List<String>> by lazy {
+        val root = kotlinx.serialization.json.Json.parseToJsonElement(ALIASES_FILE.readText(Charsets.UTF_8))
+        val aliases = (root as kotlinx.serialization.json.JsonObject)["aliases"] as kotlinx.serialization.json.JsonObject
+        aliases.mapValues { (_, v) ->
+            (v as kotlinx.serialization.json.JsonArray).map { (it as kotlinx.serialization.json.JsonPrimitive).content }
+        }
+    }
 
     private fun core(full: String): String {
         val c = full.split(" ").filter { it.isNotEmpty() && it !in STOP_WORDS }.joinToString(" ")
@@ -76,9 +76,12 @@ object TestAliases {
         val set = linkedSetOf(full, Normalizer.normalize(short ?: ""))
         val c = core(full)
         set.add(c)
-        val explicit = (EXTRA[c].orEmpty() + c).toSet()
+        val listed = EXTRA[c].orEmpty().toSet()
+        val explicit = listed + c
         set.addAll(explicit)
-        return set.filter { it.isNotEmpty() && (it.length >= 4 || (it in explicit && it.length >= 2)) }.sorted()
+        return set.filter {
+            it.isNotEmpty() && (it.length >= 4 || (it in explicit && it.length >= 2)) && (it !in GENERIC_WORDS || it in listed)
+        }.sorted()
     }
 
     fun tokens(name: String, short: String?): List<String> =
