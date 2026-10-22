@@ -76,8 +76,12 @@ class PairingHandler(
     private fun post(req: HttpRequest): HttpResponse {
         // Une page d'un autre site (ou un DNS rebinding deja bloque par Host) ne peut pas soumettre le formulaire.
         val origin = req.singleHeader("origin")
-        if (origin != null && origin != expectedOrigin) return HttpResponse.empty(403)
         val fetchSite = req.singleHeader("sec-fetch-site")
+        // Certains navigateurs envoient "Origin: null" pour un formulaire de la meme page (politique de referrer
+        // stricte, constate avec Chrome Android) : accepte seulement si Sec-Fetch-Site (non falsifiable par une page)
+        // confirme la meme origine.
+        val sameOriginNull = origin == "null" && fetchSite == "same-origin"
+        if (origin != null && origin != expectedOrigin && !sameOriginNull) return HttpResponse.empty(403)
         if (fetchSite != null && fetchSite != "same-origin" && fetchSite != "none") return HttpResponse.empty(403)
 
         val contentType = req.singleHeader("content-type") ?: return HttpResponse.empty(415)

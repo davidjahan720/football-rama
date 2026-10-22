@@ -178,7 +178,7 @@ class HttpResponse(
         add("Pragma" to "no-cache")
         add("X-Content-Type-Options" to "nosniff")
         add("Content-Security-Policy" to CSP)
-        add("Referrer-Policy" to "no-referrer")
+        add("Referrer-Policy" to "same-origin")
         add("X-Frame-Options" to "DENY")
         add("Cross-Origin-Resource-Policy" to "same-origin")
         addAll(extraHeaders)

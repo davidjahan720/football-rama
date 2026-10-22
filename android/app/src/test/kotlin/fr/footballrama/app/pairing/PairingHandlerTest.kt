@@ -120,6 +120,8 @@ class PairingHandlerTest {
         val body = validBody(session.code)
         assertEquals(403, h.handle(post(path, body, origin = "http://evil.example")).status)
         assertEquals(403, h.handle(post(path, body, origin = "null")).status)
+        assertEquals(403, h.handle(post(path, body, origin = "null", extra = listOf("sec-fetch-site" to "cross-site"))).status)
+        assertEquals(403, h.handle(post(path, body, origin = "null", extra = listOf("sec-fetch-site" to "same-site"))).status)
         assertEquals(403, h.handle(post(path, body, extra = listOf("sec-fetch-site" to "cross-site"))).status)
         assertEquals(415, h.handle(post(path, body, contentType = "text/plain")).status)
         assertEquals(415, h.handle(post(path, body, contentType = "multipart/form-data; boundary=x")).status)
@@ -127,6 +129,15 @@ class PairingHandlerTest {
         assertTrue(submitted.isEmpty())
         // Origin absent (ancien navigateur, curl) : accepte, le jeton et le code restent exiges.
         assertEquals(200, h.handle(post(path, body, origin = null)).status)
+    }
+
+    @Test
+    fun `Origin null avec Sec-Fetch-Site same-origin (Chrome Android) - accepte`() {
+        val (session, h) = setup()
+        val path = "/c/${session.token}"
+        val res = h.handle(post(path, validBody(session.code), origin = "null", extra = listOf("sec-fetch-site" to "same-origin")))
+        assertEquals(200, res.status)
+        assertEquals(1, submitted.size)
     }
 
     @Test

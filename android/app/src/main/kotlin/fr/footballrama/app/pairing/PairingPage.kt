@@ -63,7 +63,7 @@ object PairingPage {
     private fun page(title: String, content: String): String =
         "<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\">" +
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
-            "<meta name=\"referrer\" content=\"no-referrer\"><meta name=\"robots\" content=\"noindex, nofollow\">" +
+            "<meta name=\"referrer\" content=\"same-origin\"><meta name=\"robots\" content=\"noindex, nofollow\">" +
             "<title>" + escapeHtml(title) + "</title><style>" + CSS + "</style></head><body><main>" +
             content + "</main></body></html>"
 

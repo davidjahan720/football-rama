@@ -111,7 +111,7 @@ class HttpRequestReaderTest {
         val text = out.toString("UTF-8")
         assertTrue(text.startsWith("HTTP/1.1 200 OK\r\n"))
         listOf(
-            "Cache-Control: no-store", "X-Content-Type-Options: nosniff", "Referrer-Policy: no-referrer",
+            "Cache-Control: no-store", "X-Content-Type-Options: nosniff", "Referrer-Policy: same-origin",
             "Connection: close", "Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; form-action 'self'",
             "Content-Length: 9", "Content-Type: text/html; charset=utf-8",
         ).forEach { assertTrue(text.contains(it), it) }
