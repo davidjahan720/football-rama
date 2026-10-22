@@ -18,7 +18,7 @@ VALID = {
     "schema": 1,
     "version_code": 2,
     "version_name": "1.0.1",
-    "apk_url": "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
+    "apk_url": "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
     "sha256": "0123456789abcdef" * 4,
     "size": 12_345_678,
     "min_sdk": 26,
@@ -101,17 +101,17 @@ def test_repository_manifest_is_valid_or_placeholder():
 
 
 @pytest.mark.parametrize("url", [
-    "http://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
-    "https://github.com/someone/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
-    "https://github.com.evil.example/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
-    "https://user@github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
-    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk?x=1",
-    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/../FootballRama-1.0.1.apk",
-    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/%2e%2e/FootballRama-1.0.1.apk",
-    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.zip",
-    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.2/FootballRama-1.0.1.apk",
+    "http://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
+    "https://github.com/someone/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
+    "https://github.com.evil.example/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
+    "https://user@github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
+    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk?x=1",
+    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/../MatchsEtChaines-1.0.1.apk",
+    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/%2e%2e/MatchsEtChaines-1.0.1.apk",
+    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.zip",
+    "https://github.com/davidjahan720/football-rama/releases/download/v1.0.2/MatchsEtChaines-1.0.1.apk",
     "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/Other-1.0.1.apk",
-    "https://github.com:8443/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
+    "https://github.com:8443/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
     42,
 ])
 def test_bad_url_refused(env, tmp_path, url):

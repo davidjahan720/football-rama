@@ -102,7 +102,7 @@ Source : `publisher/app_release.json`, versionné dans le dépôt et mis à jour
   "schema": 1,
   "version_code": 2,
   "version_name": "1.0.1",
-  "apk_url": "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
+  "apk_url": "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
   "sha256": "<64 caractères hexadécimaux minuscules>",
   "size": 12345678,
   "min_sdk": 26,
@@ -113,7 +113,7 @@ Source : `publisher/app_release.json`, versionné dans le dépôt et mis à jour
 Règles (vérifiées par le publisher **et** par l'app) :
 
 - `schema` = 1 ; `version_code` entier > 0 (≤ 2³¹ − 1, comme le `versionCode` Android) ; `version_name` de la forme `x.y.z`.
-- `apk_url` commence **exactement** par `https://github.com/davidjahan720/football-rama/releases/download/`, suivi de `<tag>/<fichier>.apk` : deux segments seulement, caractères `[A-Za-z0-9._-]`, pas de `..`, pas d'encodage `%`, pas d'identifiants, pas de port, pas de paramètres ni de fragment. Le publisher impose en plus `v<version_name>/FootballRama-<version_name>.apk`.
+- `apk_url` commence **exactement** par `https://github.com/davidjahan720/football-rama/releases/download/`, suivi de `<tag>/<fichier>.apk` : deux segments seulement, caractères `[A-Za-z0-9._-]`, pas de `..`, pas d'encodage `%`, pas d'identifiants, pas de port, pas de paramètres ni de fragment. Le publisher impose en plus `v<version_name>/MatchsEtChaines-<version_name>.apk`.
 - `sha256` : 64 caractères hexadécimaux minuscules ; `size` : entier entre 1 et 100 Mo (104 857 600 octets).
 - `min_sdk` : niveau d'API Android minimal ; `notes` : texte facultatif, 500 caractères au maximum.
 - Taille de `update.json` : 64 Ko au maximum. Les champs inconnus sont refusés par le publisher et ignorés par l'app.

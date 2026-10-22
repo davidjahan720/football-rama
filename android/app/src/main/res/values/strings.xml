@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="fr">
-    <string name="app_name">Football Rama</string>
+    <string name="app_name">Matchs &amp; Chaînes</string>
 
     <!-- Connexion -->
     <string name="login_subtitle">Les chaînes de votre abonnement IPTV qui diffusent les matchs de Ligue 1, Premier League et Ligue des champions, aujourd’hui et demain.</string>
-    <string name="login_disclaimer">Football Rama ne fournit aucune chaîne. Vos identifiants restent sur cet appareil.</string>
+    <string name="login_disclaimer">Matchs &amp; Chaînes ne fournit aucune chaîne. Vos identifiants restent sur cet appareil.</string>
     <string name="login_cleartext_warning">Votre fournisseur n’utilise pas de connexion chiffrée : vos identifiants circulent en clair sur le réseau. Préférez une adresse https si votre fournisseur la propose.</string>
     <string name="login_press_back_again">Appuyez de nouveau sur Retour pour quitter.</string>
     <string name="login_server_label">Adresse du serveur (avec le port)</string>
@@ -117,7 +117,7 @@
     <string name="retry">Réessayer</string>
     <string name="change_account">Modifier mes identifiants</string>
     <string name="not_configured_title">Calendrier des matchs non configuré</string>
-    <string name="not_configured_body">Cette version de l’application ne contient pas l’adresse ou la clé de vérification du calendrier. Installez une version officielle de Football Rama.</string>
+    <string name="not_configured_body">Cette version de l’application ne contient pas l’adresse ou la clé de vérification du calendrier. Installez une version officielle de Matchs &amp; Chaînes.</string>
 
     <!-- Matchs -->
     <string name="section_today">Aujourd’hui</string>
@@ -167,8 +167,8 @@
     <string name="cancel">Annuler</string>
     <string name="settings_about">À propos</string>
     <string name="settings_version">Version %1$s</string>
-    <string name="mention_neutral">Football Rama est un outil neutre : il ne fournit, ne diffuse et ne lit aucune chaîne ni aucune vidéo. Il indique seulement quelles chaînes de votre propre abonnement IPTV diffusent les matchs, d’après le guide TV de votre fournisseur.</string>
-    <string name="mention_privacy">Aucune donnée n’est envoyée à un serveur Football Rama. Vos identifiants sont chiffrés sur cet appareil et ne sont transmis qu’au serveur de votre fournisseur. Le calendrier des matchs est un fichier public signé, téléchargé sans identifiant ni information de compte.</string>
+    <string name="mention_neutral">Matchs &amp; Chaînes est un outil neutre : il ne fournit, ne diffuse et ne lit aucune chaîne ni aucune vidéo. Il indique seulement quelles chaînes de votre propre abonnement IPTV diffusent les matchs, d’après le guide TV de votre fournisseur.</string>
+    <string name="mention_privacy">Aucune donnée n’est envoyée à un serveur Matchs &amp; Chaînes. Vos identifiants sont chiffrés sur cet appareil et ne sont transmis qu’au serveur de votre fournisseur. Le calendrier des matchs est un fichier public signé, téléchargé sans identifiant ni information de compte.</string>
     <string name="mention_attribution_intro">Calendrier des matchs :</string>
 
     <!-- Mise à jour de l’application -->
@@ -184,12 +184,12 @@
     <string name="app_update_downloading">Téléchargement de la mise à jour : %1$d %%</string>
     <string name="app_update_verifying">Vérification de l’intégrité du fichier…</string>
     <string name="app_update_installing">Installation en cours : confirmez sur l’écran qui s’affiche.</string>
-    <string name="app_update_needs_permission">Autorisez Football Rama à installer des applications inconnues dans l’écran qui vient de s’ouvrir, puis revenez et appuyez de nouveau sur « Installer ».</string>
+    <string name="app_update_needs_permission">Autorisez Matchs &amp; Chaînes à installer des applications inconnues dans l’écran qui vient de s’ouvrir, puis revenez et appuyez de nouveau sur « Installer ».</string>
     <string name="app_update_error_network">Téléchargement de la mise à jour impossible. Vérifiez la connexion Internet et réessayez.</string>
     <string name="app_update_error_integrity">Le fichier téléchargé ne correspond pas à la version officielle : il a été supprimé et n’a pas été installé.</string>
     <string name="app_update_error_storage">Espace de stockage insuffisant pour installer la mise à jour.</string>
     <string name="app_update_error_install">L’installation a échoué. Réessayez, ou installez la nouvelle version avec l’application Downloader.</string>
-    <string name="app_update_error_blocked">L’installation a été bloquée par l’appareil. Autorisez Football Rama à installer des applications inconnues.</string>
-    <string name="app_update_error_permission_screen">Impossible d’ouvrir le réglage des sources inconnues. Autorisez Football Rama dans Paramètres, rubrique Sécurité.</string>
+    <string name="app_update_error_blocked">L’installation a été bloquée par l’appareil. Autorisez Matchs &amp; Chaînes à installer des applications inconnues.</string>
+    <string name="app_update_error_permission_screen">Impossible d’ouvrir le réglage des sources inconnues. Autorisez Matchs &amp; Chaînes dans Paramètres, rubrique Sécurité.</string>
     <string name="app_update_banner">Mise à jour %1$s disponible : installez-la depuis les réglages.</string>
 </resources>

@@ -1,14 +1,14 @@
-# Politique de confidentialité — Football Rama
+# Politique de confidentialité — Matchs & Chaînes
 
 *Dernière mise à jour : [date de publication à compléter]*
 
-Football Rama est une application pour Android TV qui indique quelles chaînes de **votre propre abonnement IPTV** diffusent les matchs de football, d’après le guide TV de votre fournisseur. Elle ne fournit, ne diffuse et ne lit aucune chaîne.
+Matchs & Chaînes est une application pour Android TV qui indique quelles chaînes de **votre propre abonnement IPTV** diffusent les matchs de football, d’après le guide TV de votre fournisseur. Elle ne fournit, ne diffuse et ne lit aucune chaîne.
 
 **Éditeur :** David Jahan — contact : [adresse e-mail de contact à compléter]
 
 ## En résumé
 
-- L’éditeur ne collecte **aucune** donnée personnelle : pas de compte, pas de serveur Football Rama, pas de statistiques d’usage, pas de publicité, pas de rapport de plantage.
+- L’éditeur ne collecte **aucune** donnée personnelle : pas de compte, pas de serveur Matchs & Chaînes, pas de statistiques d’usage, pas de publicité, pas de rapport de plantage.
 - Vos identifiants IPTV restent sur votre appareil, chiffrés, et ne sont envoyés qu’au serveur de votre fournisseur.
 - « Se déconnecter » efface vos identifiants et les résultats enregistrés. Désinstaller l’application efface tout.
 
@@ -29,7 +29,7 @@ Ces données ne sont ni sauvegardées dans le cloud ni transférées vers un aut
 
 Le calendrier provient de football-data.org ; l’application ne transmet rien à ce service.
 
-**Connexion depuis le téléphone (facultative).** Si vous choisissez « Se connecter avec mon téléphone », le boîtier ouvre pendant 5 minutes au plus une page web sur votre réseau local. Le formulaire que vous remplissez sur votre téléphone est envoyé directement au boîtier, sans passer par Internet ni par un serveur Football Rama. Cette liaison locale n’est pas chiffrée (HTTP) : utilisez cette option uniquement sur votre réseau domestique. La page s’arrête dès la connexion réussie, à la sortie de l’écran ou après 5 codes de vérification erronés ; rien n’y est conservé.
+**Connexion depuis le téléphone (facultative).** Si vous choisissez « Se connecter avec mon téléphone », le boîtier ouvre pendant 5 minutes au plus une page web sur votre réseau local. Le formulaire que vous remplissez sur votre téléphone est envoyé directement au boîtier, sans passer par Internet ni par un serveur Matchs & Chaînes. Cette liaison locale n’est pas chiffrée (HTTP) : utilisez cette option uniquement sur votre réseau domestique. La page s’arrête dès la connexion réussie, à la sortie de l’écran ou après 5 codes de vérification erronés ; rien n’y est conservé.
 
 ## Vos droits
 

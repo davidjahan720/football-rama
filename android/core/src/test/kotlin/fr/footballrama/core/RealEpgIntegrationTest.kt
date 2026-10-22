@@ -38,7 +38,7 @@ class RealEpgIntegrationTest {
     fun `EPG reel - matchs du 20 et 21 octobre`() {
         val epg = File(cacheDir, "epg.xml")
         val fx = File(cacheDir, "fixtures_2026-10-20_7.json")
-        assumeTrue(epg.isFile && fx.isFile, "cache/epg.xml absent : test d'integration ignore")
+        assumeTrue(epg.isFile && fx.isFile && epg.length() > 1_000_000, "cache/epg.xml absent ou vide (fournisseur sans guide) : test d integration ignore")
 
         val fixtures = convertFootballData(fx.readText())
         val (categories, streams) = MockWebServer().use { server ->

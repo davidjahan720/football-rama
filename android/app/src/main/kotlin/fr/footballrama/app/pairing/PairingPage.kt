@@ -11,9 +11,9 @@ object PairingPage {
 
     /** Formulaire. [server] et [username] pre-remplis apres une erreur ; le mot de passe ne l'est JAMAIS. */
     fun form(action: String, error: String? = null, server: String = "", username: String = ""): String = page(
-        title = "Connexion à Football Rama",
+        title = "Connexion à Matchs & Chaînes",
         content = buildString {
-            append("<h1>Connexion à Football Rama</h1>")
+            append("<h1>Connexion à Matchs &amp; Chaînes</h1>")
             append("<p>Saisissez les informations de votre abonnement IPTV. Elles sont envoyées uniquement à votre boîtier.</p>")
             if (error != null) append("<p class=\"err\" role=\"alert\">").append(escapeHtml(error)).append("</p>")
             append("<form method=\"post\" action=\"").append(escapeHtml(action)).append("\" accept-charset=\"UTF-8\" autocomplete=\"off\">")

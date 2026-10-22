@@ -9,7 +9,7 @@
     3. Lance gradlew assembleRelease (signature : FOOTBALL_RAMA_SIGNING ou %USERPROFILE%\.football-rama\signing.properties).
     4. Vérifie avec apksigner que l'APK est signé (schémas v2 et v3), affiche l'empreinte SHA-256 du certificat et la
        compare à %USERPROFILE%\.football-rama\certificate-sha256.txt ; vérifie paquet et version avec aapt2.
-    5. Copie l'APK en dist/FootballRama-<Version>.apk, calcule SHA-256 et taille, met à jour publisher/app_release.json
+    5. Copie l'APK en dist/MatchsEtChaines-<Version>.apk, calcule SHA-256 et taille, met à jour publisher/app_release.json
        et le valide avec le publisher.
     6. S'ARRÊTE en affichant les commandes restantes (release GitHub, commit, push, workflow), sauf avec -Publish.
 
@@ -52,7 +52,7 @@ function Invoke-Native([string]$exe, [string[]]$arguments) {
 
 $Repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $Tag = "v$Version"
-$ApkName = "FootballRama-$Version.apk"
+$ApkName = "MatchsEtChaines-$Version.apk"
 $ManifestPath = Join-Path $Repo 'publisher\app_release.json'
 $ApkUrl = "https://github.com/davidjahan720/football-rama/releases/download/$Tag/$ApkName"
 if (-not $Notes) { $Notes = "Football Rama $Version" }

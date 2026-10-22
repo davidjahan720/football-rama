@@ -83,8 +83,8 @@ def validate(doc) -> dict:
     if not is_allowed_apk_url(url):
         raise ManifestError(f"apk_url doit commencer par {APK_URL_PREFIX} et viser un fichier .apk")
     tag, file = url[len(APK_URL_PREFIX):].split("/")
-    if tag != f"v{vn}" or file != f"FootballRama-{vn}.apk":
-        raise ManifestError(f"apk_url incoherente avec version_name (attendu v{vn}/FootballRama-{vn}.apk)")
+    if tag != f"v{vn}" or file != f"MatchsEtChaines-{vn}.apk":
+        raise ManifestError(f"apk_url incoherente avec version_name (attendu v{vn}/MatchsEtChaines-{vn}.apk)")
     sha = doc["sha256"]
     if not isinstance(sha, str) or not _SHA256.fullmatch(sha):
         raise ManifestError("sha256 doit contenir 64 caracteres hexadecimaux minuscules")

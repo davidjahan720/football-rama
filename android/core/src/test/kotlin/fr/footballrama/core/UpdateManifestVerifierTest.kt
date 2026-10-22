@@ -22,7 +22,7 @@ class UpdateManifestVerifierTest {
     private fun manifest(
         versionCode: String = "2",
         versionName: String = "\"1.0.1\"",
-        url: String = "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
+        url: String = "https://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
         sha256: String = SHA,
         size: String = "12345678",
         minSdk: String = "26",
@@ -84,8 +84,8 @@ class UpdateManifestVerifierTest {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "http://github.com/davidjahan720/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
-            "https://github.com/autre/football-rama/releases/download/v1.0.1/FootballRama-1.0.1.apk",
+            "http://github.com/davidjahan720/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
+            "https://github.com/autre/football-rama/releases/download/v1.0.1/MatchsEtChaines-1.0.1.apk",
             "https://github.com/davidjahan720/football-rama-fork/releases/download/v1.0.1/a.apk",
             "https://github.com.evil.example/davidjahan720/football-rama/releases/download/v1.0.1/a.apk",
             "https://evil.example/davidjahan720/football-rama/releases/download/v1.0.1/a.apk",
