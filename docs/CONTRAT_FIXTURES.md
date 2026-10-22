@@ -56,10 +56,52 @@ Règles :
 - `aliases` et `tokens` sont **déjà normalisés** par le publisher : minuscules, sans accents, lettres spéciales translittérées (ø→o, ß→ss…), ponctuation remplacée par des espaces, espaces compactés. L'app applique la même normalisation au texte de l'EPG avant de comparer (voir ci-dessous).
 - `window` : de minuit UTC du jour J à J+2 03:00 UTC, bornes incluses. Cela couvre les soirées de J+1 en Europe.
 - Statuts football-data conservés : SCHEDULED, TIMED, IN_PLAY, PAUSED, EXTRA_TIME, PENALTY_SHOOTOUT. Les matchs dont une équipe n'est pas encore connue (« TBD ») sont exclus.
-- `competition_keywords` et `excluded_title_words` contiennent les listes complètes du prototype. L'exemple ci-dessus est abrégé.
+- `competition_keywords` et `excluded_title_words` contiennent les listes complètes du publisher (`publisher/football_rama_publisher/aliases.py`). L'exemple ci-dessus est abrégé.
 - `tokens` peut être vide. « paris » est un mot générique (il désignerait aussi le Paris FC) : le PSG est reconnu par « psg », « paris sg » et « paris saint germain ».
 - `valid_until` = `generated_at` + 36 h.
 - Les dates sont en ISO 8601 UTC, suffixe `Z`.
+
+## Compétitions (2026-10-22)
+
+Toutes sont incluses dans l'offre **gratuite** de football-data.org. Le publisher les demande en **une seule requête** par exécution (`competitions=PL,FL1,CL,BL1,SA,PD,DED,PPL,ELC`). Europa League et Conference League (offre payante) ne sont pas couvertes. Le schéma ne change pas (`schema` reste 1) : seules les valeurs de `competitions` et `matching` s'allongent.
+
+| Code | Nom publié | Mots-clés de compétition (`competition_keywords`) |
+|---|---|---|
+| `FL1` | Ligue 1 | ligue 1, ligue1, mcdonald |
+| `PL` | Premier League | premier league, epl |
+| `CL` | Ligue des champions | champions league, ligue des champions, uefa champions, ucl, liga de campeones, champions |
+| `BL1` | Bundesliga | bundesliga, 1 bundesliga |
+| `SA` | Serie A | serie a, lega serie a, serie a tim, serie a enilive, calcio |
+| `PD` | LaLiga | laliga, la liga, liga espanola, liga ea sports, laliga ea sports |
+| `DED` | Eredivisie | eredivisie |
+| `PPL` | Liga Portugal | liga portugal, primeira liga, liga betclic, liga portugal betclic |
+| `ELC` | Championship | efl championship, sky bet championship, skybet championship, efl |
+
+### Mots-clés de compétition : risques évalués
+
+Un mot-clé ne suffit jamais seul : il ne compte qu'avec **une équipe du match** trouvée dans un programme de la fenêtre du coup d'envoi (score `moyen`).
+
+- **« championship » seul est écarté** : il désigne aussi la RFU Championship (rugby : Coventry, Doncaster…), la Championship de rugby à XIII, la Scottish Championship, des tournois de golf ou de fléchettes. Combiné au token d'une ville anglaise (« coventry », « norwich »), il produirait des faux positifs. « efl » n'existe qu'en football anglais ; un club ne joue qu'un match par jour, donc « efl » + nom du club au moment du coup d'envoi désigne ce match.
+- **« serie a »** désigne aussi la Série A brésilienne (et équatorienne) : les clubs italiens n'ont pas d'homonyme brésilien couvert par leurs alias (« Internacional » ≠ « inter », mot entier) et les horaires diffèrent ; « calcio » et « lega serie a » ajoutent du contexte italien.
+- **« laliga » / « bundesliga »** apparaissent dans « LaLiga Hypermotion » / « 2. Bundesliga » : ces titres sont exclus par `excluded_title_words` (voir ci-dessous).
+- Pas de « liga » seul ni de « primera division » (Argentine, Chili…).
+
+### Divisions inférieures et compétitions féminines exclues (`excluded_title_words`, ajouts)
+
+`vrouwen`, `femminile`, `feminino`, `2 bundesliga`, `serie b`, `laliga hypermotion`, `laliga 2`, `la liga 2`, `segunda division`, `liga portugal 2`, `eerste divisie`, `keuken kampioen`, `league one`, `league two`, `ligue 2`. Correspondance par mots entiers : « La Liga 2025/26 » n'est pas exclu (« 2025 » ≠ « 2 »).
+
+### Surnoms et mots génériques
+
+- Les surnoms des clubs principaux (formes française, anglaise, locale) sont dans `aliases.json` : Bayern Munich, Leverkusen, Gladbach, Cologne, HSV, Inter, AC Milan, Juve, Naples, AS Rome, Atlético de Madrid, Barça / Barcelone, Séville, Betis, Athletic Bilbao, Ajax, PSV, Feyenoord, AZ Alkmaar, Benfica, FC Porto, Sporting CP / Sporting Lisbonne, SC Braga, West Brom, QPR…
+- Mots génériques ajoutés (jamais tokens) : villes à plusieurs clubs ou mots courants (`barcelona` — Espanyol de Barcelona —, `munchen` — 1860 Munich —, `berlin`, `rotterdam`, `eintracht`, `fortuna`, `portugal`, `clube`, `vitoria`, `nacional`, `deportivo`, `sociedad`, `wednesday`, `derby`, `rangers`, `queens`…).
+- **Nouveau (publisher)** : un mot générique seul n'est jamais un alias (ex. « athletic » pour l'Athletic Club, qui toucherait Charlton Athletic), **sauf s'il est listé explicitement dans `aliases.json`**. Trois choix délibérés : `atletico` (Atlético de Madrid, existant), `barcelona` (FC Barcelona) et `sporting` (Sporting CP : les chaînes portugaises titrent « Sporting x Benfica »). Pour « sporting », un titre « Sporting Gijón - Real Oviedo » ou « Sporting Braga - FC Porto » est écarté par la règle de l'équipe étrangère (un des deux côtés n'est aucune équipe du match) ; « LaLiga Hypermotion » est exclu ; un titre sans séparateur ne compte qu'avec un mot-clé de la compétition du Sporting CP.
+- `aliases.json` est validé au chargement : clés et valeurs normalisées, listes, **clé en double refusée**.
+
+### Code de compétition inconnu (compatibilité)
+
+L'app ne rejette jamais un fichier pour un code de compétition inconnu : le code est une chaîne libre, le nom affiché vient de `competitions` (sinon le code brut), un code sans `competition_keywords` n'a simplement pas de mot-clé (seuls les scores `fort` et `moyen` « deux équipes » restent possibles). Une app 1.0.0 recevant `BL1` affiche donc « Bundesliga » (nom du fichier) avec le badge neutre. Les versions suivantes ont un libellé, une couleur et un filtre par compétition.
+
+Taille : environ 32 Ko pour 72 matchs aux noms longs (test `test_fixtures_size_stays_far_below_app_limit`), très loin de la limite de 2 Mo de l'app.
 
 ## Normalisation (identique des deux côtés)
 

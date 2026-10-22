@@ -43,6 +43,9 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
     private val _countryFilter = MutableStateFlow(container.uiPreferences.countryFilter)
     val countryFilter: StateFlow<String?> = _countryFilter.asStateFlow()
 
+    private val _competitionFilter = MutableStateFlow(container.uiPreferences.competitionFilter)
+    val competitionFilter: StateFlow<String?> = _competitionFilter.asStateFlow()
+
     private val _userAgent = MutableStateFlow(container.uiPreferences.userAgent.orEmpty())
     val userAgent: StateFlow<String> = _userAgent.asStateFlow()
 
@@ -81,6 +84,11 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         container.uiPreferences.countryFilter = key
     }
 
+    fun setCompetitionFilter(code: String?) {
+        _competitionFilter.value = code
+        container.uiPreferences.competitionFilter = code
+    }
+
     fun onUserAgentChange(value: String) {
         _userAgent.value = value
         _userAgentMessage.value = null
@@ -109,6 +117,7 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             container.signOut()
             _report.value = null
             _countryFilter.value = null
+            _competitionFilter.value = null
             _userAgent.value = ""
             _userAgentMessage.value = null
         }

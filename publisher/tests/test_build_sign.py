@@ -72,7 +72,8 @@ def test_invalid_entries_skipped(raw_matches):
         {**good, "id": True},
         {**good, "utcDate": "garbage"},
         {**good, "utcDate": "2026-10-20T19:00:00"},         # no timezone
-        {**good, "competition": {"code": "SA"}},
+        {**good, "competition": {"code": "EL"}},           # Europa League: paid plan, not published
+        {**good, "competition": {"code": "BSA"}},          # free but out of scope (Brazil)
         {**good, "homeTeam": {"name": None}},                # TBD knock-out
         {**good, "awayTeam": {"name": "   "}},
     ]
@@ -87,16 +88,19 @@ def test_document_matches_contract(raw_matches):
     assert doc["generated_at"] == "2026-10-20T06:00:00Z"
     assert doc["valid_until"] == "2026-10-21T18:00:00Z"
     assert doc["window"] == {"from": "2026-10-20T00:00:00Z", "to": "2026-10-22T03:00:00Z"}
-    assert doc["competitions"] == {"PL": "Premier League", "FL1": "Ligue 1", "CL": "Ligue des champions"}
+    assert doc["competitions"] == {"PL": "Premier League", "FL1": "Ligue 1", "CL": "Ligue des champions",
+                                   "BL1": "Bundesliga", "SA": "Serie A", "PD": "LaLiga", "DED": "Eredivisie",
+                                   "PPL": "Liga Portugal", "ELC": "Championship"}
     assert set(doc["matching"]) == {"competition_keywords", "excluded_title_words"}
-    assert set(doc["matching"]["competition_keywords"]) == {"PL", "FL1", "CL"}
+    assert set(doc["matching"]["competition_keywords"]) == set(doc["competitions"])
     psg = next(m for m in doc["matches"] if m["id"] == 575367)
     assert psg["competition"] == "CL"
     assert psg["kickoff_utc"] == "2026-10-20T19:00:00Z"
     assert psg["home"]["name"] == "Paris Saint-Germain FC"
     assert psg["home"]["short"] == "PSG"
     assert "psg" in psg["home"]["aliases"]
-    assert "barca" in psg["away"]["aliases"] and "barcelona" in psg["away"]["tokens"]
+    # "barcelona" is generic since Espanyol de Barcelona is covered: alias (listed in aliases.json), not token
+    assert {"barca", "barcelona"} <= set(psg["away"]["aliases"]) and "barcelona" not in psg["away"]["tokens"]
     for m in doc["matches"]:
         assert set(m) == {"id", "competition", "kickoff_utc", "home", "away"}
         for side in (m["home"], m["away"]):

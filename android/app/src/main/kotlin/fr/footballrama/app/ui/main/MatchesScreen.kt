@@ -48,6 +48,8 @@ import fr.footballrama.app.ui.FocusRowCard
 import fr.footballrama.app.ui.FrButton
 import fr.footballrama.app.ui.Messages
 import fr.footballrama.app.ui.ProgressBar
+import androidx.compose.ui.graphics.Color
+import fr.footballrama.app.ui.logic.Competitions
 import fr.footballrama.app.ui.logic.DaySections
 import fr.footballrama.app.ui.logic.ageOf
 import fr.footballrama.app.ui.logic.bestScore
@@ -67,6 +69,9 @@ fun MatchesScreen(
     report: MatchReport?,
     sections: DaySections,
     now: Instant,
+    competitions: List<String>,
+    competition: String?,
+    onCompetition: (String?) -> Unit,
     countries: List<String>,
     filter: String?,
     labeler: (String) -> String,
@@ -90,6 +95,10 @@ fun MatchesScreen(
         else -> FOCUS_SETTINGS
     }
     val pending = remember { mutableFocusOnce() }
+    // Nom fourni par le calendrier pour un code inconnu de cette version de l'app
+    val competitionLabel: (String) -> String = { code ->
+        Competitions.label(code, report?.matches?.firstOrNull { it.competition == code }?.competitionName)
+    }
 
     val settingsFocus = remember { FocusRequester() }
     if (target == FOCUS_SETTINGS) {
@@ -118,9 +127,21 @@ fun MatchesScreen(
         }
         Spacer(Modifier.height(10.dp))
 
-        // Filtre pays
+        // Filtre competition (masque les matchs) : utile seulement avec au moins 2 competitions affichees
+        if (competitions.size >= 2) {
+            FilterRow(stringResource(R.string.filter_competition_label)) {
+                item(key = "all") {
+                    CountryChip(stringResource(R.string.filter_all_competitions), selected = competition == null) { onCompetition(null) }
+                }
+                items(competitions, key = { "k:$it" }) { code ->
+                    CountryChip(competitionLabel(code), selected = competition == code) { onCompetition(code) }
+                }
+            }
+        }
+
+        // Filtre pays (masque les chaines)
         if (countries.isNotEmpty()) {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
+            FilterRow(stringResource(R.string.filter_country_label)) {
                 item(key = "all") {
                     CountryChip(stringResource(R.string.filter_all), selected = filter == null) { onFilter(null) }
                 }
@@ -128,8 +149,8 @@ fun MatchesScreen(
                     CountryChip(labeler(key), selected = filter == key) { onFilter(key) }
                 }
             }
-            Spacer(Modifier.height(8.dp))
         }
+        if (competitions.size >= 2 || countries.isNotEmpty()) Spacer(Modifier.height(4.dp))
 
         StatusArea(state = state, report = report, now = now, onRetry = onRetry, onChangeAccount = onChangeAccount)
         updateBanner()
@@ -208,7 +229,7 @@ private fun MatchCard(match: MatchResult, filter: String?, modifier: Modifier, o
     val best = bestScore(channels)
     FocusRowCard(onClick = onClick, modifier = modifier) {
         Text(Formats.time(match.kickoffUtcMillis), style = FrText.BodyStrong, color = FrColors.Text, modifier = Modifier.width(72.dp))
-        Badge(match.competitionName, FrColors.BadgeBg, FrColors.BadgeText, modifier = Modifier.widthIn(max = 200.dp))
+        CompetitionBadge(match, modifier = Modifier.widthIn(max = 200.dp))
         // Noms courts du calendrier ("Dortmund", "Slavia Praha") ; nom complet dans le detail.
         // Points de suspension seulement si meme le nom court ne tient pas.
         Text(
@@ -245,7 +266,27 @@ fun ScoreBadge(score: Score) {
     }
 }
 
-/** Puce de filtre pays (Surface TV stable, pas d'API experimentale). Selection = fond ambre. */
+/** Badge de competition : libelle francais et teinte propre a chaque competition (style neutre si code inconnu). */
+@Composable
+fun CompetitionBadge(match: MatchResult, modifier: Modifier = Modifier) {
+    val style = Competitions.style(match.competition)
+    Badge(Competitions.label(match), Color(style.background), Color(style.content), modifier = modifier)
+}
+
+/** Ligne de filtres precedee de son intitule (non focalisable) ; les puces restent atteignables au D-pad. */
+@Composable
+private fun FilterRow(title: String, content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(title, style = FrText.Label, color = FrColors.TextMuted, modifier = Modifier.widthIn(min = 120.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(vertical = 4.dp, horizontal = 6.dp),
+            content = content,
+        )
+    }
+}
+
+/** Puce de filtre (pays ou competition ; Surface TV stable, pas d'API experimentale). Selection = fond ambre. */
 @Composable
 private fun CountryChip(label: String, selected: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(50)

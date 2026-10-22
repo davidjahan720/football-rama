@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import fr.footballrama.app.R
 import fr.footballrama.app.ui.AttributionFooter
-import fr.footballrama.app.ui.Badge
 import fr.footballrama.app.ui.FocusableInfoRow
 import fr.footballrama.app.ui.FrButton
 import fr.footballrama.app.ui.logic.filterChannels
@@ -73,7 +72,7 @@ fun DetailScreen(
                     color = FrColors.TextMuted,
                 )
                 Spacer(Modifier.width(16.dp))
-                Badge(match.competitionName, FrColors.BadgeBg, FrColors.BadgeText)
+                CompetitionBadge(match)
             }
         }
         Spacer(Modifier.height(12.dp))

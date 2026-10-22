@@ -14,7 +14,8 @@ import androidx.tv.material3.darkColorScheme
  * Palette sombre "industrielle". Ratios de contraste WCAG (texte) mesures :
  * Text/Background 16.0, Text/Surface 14.2, Text/SurfaceFocused 11.6, TextMuted/Background 9.2,
  * TextMuted/SurfaceFocused 6.7, Accent/Background 11.5, OnAccent/Accent 11.5, Fort 6.5, Moyen 8.9,
- * Erreur 8.4, Avertissement 10.1, Info 11.3, Badge competition 9.6. Tous >= 4.5:1 (AA).
+ * Erreur 8.4, Avertissement 10.1, Info 11.3, Badge competition neutre 9.6 (badges par competition :
+ * logic/Competitions.kt, contraste verifie par CompetitionsTest). Tous >= 4.5:1 (AA).
  */
 object FrColors {
     val Background = Color(0xFF101418)
