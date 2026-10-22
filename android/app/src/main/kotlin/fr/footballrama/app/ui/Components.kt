@@ -22,7 +22,10 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,11 +33,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -47,6 +52,7 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import fr.footballrama.app.ui.theme.FrColors
+import kotlinx.coroutines.delay
 import fr.footballrama.app.ui.theme.FrText
 
 private val Shape = RoundedCornerShape(8.dp)
@@ -256,6 +262,21 @@ fun FrTextField(
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    // Le clavier ne doit s'ouvrir qu'a l'appui sur OK : ouvert des le focus (Gboard TV sur le Z11 Pro), il capte
+    // les fleches et la telecommande ne peut plus quitter le champ.
+    var keyboardRequested by remember { mutableStateOf(false) }
+    LaunchedEffect(focused) {
+        if (!focused) {
+            keyboardRequested = false
+        } else if (!keyboardRequested) {
+            // Le systeme peut ouvrir le clavier juste apres le focus : on le referme sur quelques images.
+            repeat(3) {
+                keyboard?.hide()
+                delay(120)
+            }
+        }
+    }
     Column(modifier = modifier) {
         Text(text = label, style = FrText.Label, color = if (focused) FrColors.Accent else FrColors.TextMuted)
         Spacer(Modifier.height(4.dp))
@@ -274,10 +295,19 @@ fun FrTextField(
                 .fillMaxWidth()
                 .semantics { contentDescription = label }
                 .onPreviewKeyEvent { event ->
+                    // Haut / Bas : champ mono-ligne, le texte n'en a pas l'usage. Sans ceci le champ garde le
+                    // focus et la telecommande ne peut plus atteindre les boutons au-dessus (constate sur le Z11 Pro).
+                    if (event.key == Key.DirectionUp || event.key == Key.DirectionDown) {
+                        if (event.type == KeyEventType.KeyDown) {
+                            focusManager.moveFocus(if (event.key == Key.DirectionUp) FocusDirection.Up else FocusDirection.Down)
+                        }
+                        return@onPreviewKeyEvent true
+                    }
                     // OK / Entree de la telecommande : ouvre le clavier virtuel (sans consommer l'evenement).
                     if (event.type == KeyEventType.KeyUp &&
                         (event.key == Key.DirectionCenter || event.key == Key.Enter || event.key == Key.NumPadEnter)
                     ) {
+                        keyboardRequested = true
                         keyboard?.show()
                     }
                     false
