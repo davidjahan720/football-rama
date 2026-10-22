@@ -80,7 +80,72 @@ class MatchPresentationTest {
         assertEquals("UK", Countries.key("GB"))
         assertEquals("US", Countries.key("usa"))
         assertEquals("", Countries.key("  "))
-        assertEquals("SPORTS FRANCE", Countries.key(" SPORTS FRANCE "))
+        assertEquals("FR", Countries.key(" SPORTS FRANCE "))
+    }
+
+    @Test
+    fun `prefixes reels de la liste IPTV - libelles francais`() {
+        val expected = mapOf(
+            "FR" to "France", "UK" to "Royaume-Uni", "DE" to "Allemagne", "BE" to "Belgique", "CH" to "Suisse",
+            "NL" to "Pays-Bas", "IT" to "Italie", "ES" to "Espagne", "PT" to "Portugal", "PL" to "Pologne",
+            "CZ" to "Tchéquie", "RO" to "Roumanie", "DK" to "Danemark", "AR" to "Chaînes arabes", "ARG" to "Argentine",
+            "BR" to "Brésil", "LAT" to "Amérique latine", "IN" to "Inde", "EX-YU" to "Balkans",
+        )
+        expected.forEach { (prefix, label) ->
+            assertEquals(label, Countries.label(Countries.key(prefix)), prefix)
+            assertEquals(label, Countries.label(Countries.key("|$prefix| SPORTS")), "|$prefix| SPORTS")
+        }
+        assertEquals("Autres", Countries.label(Countries.key("")))
+    }
+
+    @Test
+    fun `categories sans prefixe - suffixe TV retire et synonymes regroupes`() {
+        assertEquals("EX-YU", Countries.key("BALKANS | TV"))
+        assertEquals("EX-YU", Countries.key("ex-yu"))
+        assertEquals("AR", Countries.key("SPORTS ARABIC | TV"))
+        assertEquals("CH", Countries.key("SWITZERLAND | TV"))
+        assertEquals("UK", Countries.key("GB"))
+        assertEquals("KURDISTAN", Countries.key("KURDISTAN | TV"))
+        assertEquals("Kurdistan", Countries.label("KURDISTAN"))
+        assertEquals("KIDS", Countries.key("KIDS | TV")) // 4 lettres + " | " : categorie, pas un code
+        assertEquals("TV", Countries.key("| TV |"))
+    }
+
+    @Test
+    fun `filtres - libelles identiques regroupes, ordre France, Royaume-Uni, alphabetique, Autres en dernier`() {
+        val m = listOf(
+            match(1, "2026-10-20T19:00:00Z", listOf(
+                ch("A", "BALKANS | TV"), ch("B", "EX-YU"), ch("C", "SWITZERLAND | TV"), ch("D", "CH"), ch("E", ""),
+                ch("F", "AR"), ch("G", "SPORTS ARABIC | TV"), ch("H", "UK"), ch("I", "GB"), ch("J", "FR"), ch("K", "ARG"),
+            )),
+        )
+        val keys = availableCountries(m, Countries::label)
+        assertEquals(listOf("France", "Royaume-Uni", "Argentine", "Balkans", "Chaînes arabes", "Suisse", "Autres"), keys.map(Countries::label))
+        assertEquals(listOf("C", "D"), filterChannels(m[0].channels, "CH").map { it.name }.sorted())
+    }
+
+    // ------------------------------------------------------------------ matchs termines, noms courts
+
+    @Test
+    fun `match masque 2 h 30 apres le coup d'envoi`() {
+        val kickoff = "2026-10-20T19:00:00Z"
+        val m = match(1, kickoff)
+        val k = Instant.parse(kickoff)
+        assertFalse(isFinished(m, k.minusSeconds(60)))
+        assertFalse(isFinished(m, k.plus(Duration.ofMinutes(149))))
+        assertTrue(isFinished(m, k.plus(Duration.ofMinutes(150))))
+        assertEquals(listOf(2L), visibleMatches(listOf(m, match(2, "2026-10-20T21:00:00Z")), k.plus(Duration.ofMinutes(151))).map { it.fixtureId })
+        // splitByDay applique le masquage
+        val s = splitByDay(listOf(m, match(2, "2026-10-20T20:00:00Z")), Instant.parse("2026-10-20T21:31:00Z"), paris)
+        assertEquals(listOf(2L), s.today.map { it.fixtureId })
+    }
+
+    @Test
+    fun `nom court sur les cartes, nom complet sinon`() {
+        assertEquals("Dortmund", cardTeamName("Borussia Dortmund", "Dortmund"))
+        assertEquals("Slavia Praha", cardTeamName("SK Slavia Praha", " Slavia Praha "))
+        assertEquals("Paris FC", cardTeamName("Paris FC", null))
+        assertEquals("Paris FC", cardTeamName("Paris FC", "  "))
     }
 
     @Test

@@ -46,12 +46,4 @@ class MessagesTest {
         val steps = RefreshState.Step.entries.map { Messages.step(it) }
         assertEquals(steps.size, steps.toSet().size)
     }
-
-    @Test
-    fun `libelles pays`() {
-        assertEquals(R.string.country_fr, Messages.countryLabel("FR"))
-        assertEquals(R.string.country_uk, Messages.countryLabel("UK"))
-        assertEquals(R.string.country_other, Messages.countryLabel(""))
-        assertNull(Messages.countryLabel("SPORTS FRANCE"))
-    }
 }

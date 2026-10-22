@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +51,7 @@ import kotlinx.coroutines.delay
 private const val EXIT_CONFIRM_WINDOW_MS = 3_000L
 
 @Composable
-fun LoginScreen(vm: LoginViewModel) {
+fun LoginScreen(vm: LoginViewModel, phoneVm: PhoneLoginViewModel) {
     val activity = LocalActivity.current
 
     // Empeche captures d'ecran, enregistrement et apercu dans les applications recentes.
@@ -62,9 +63,13 @@ fun LoginScreen(vm: LoginViewModel) {
     // Retour : ferme d'abord les options avancees, puis demande un second appui pour quitter.
     var lastBack by remember { mutableLongStateOf(0L) }
     var exitHint by remember { mutableStateOf(false) }
+    // Connexion depuis le telephone : panneau plein ecran (serveur local actif uniquement pendant son affichage).
+    var phoneMode by rememberSaveable { mutableStateOf(false) }
+
     BackHandler {
         val now = System.currentTimeMillis()
         when {
+            phoneMode -> phoneMode = false
             vm.advancedOpen -> vm.closeAdvanced()
             now - lastBack < EXIT_CONFIRM_WINDOW_MS -> activity?.finish()
             else -> { lastBack = now; exitHint = true }
@@ -77,13 +82,20 @@ fun LoginScreen(vm: LoginViewModel) {
         }
     }
 
+    if (phoneMode) {
+        PhoneLoginPanel(phoneVm, onManual = { phoneMode = false })
+        return
+    }
+
+    val phoneFocus = remember { FocusRequester() }
     val serverFocus = remember { FocusRequester() }
     val userFocus = remember { FocusRequester() }
     val passFocus = remember { FocusRequester() }
     val uaFocus = remember { FocusRequester() }
     val submitFocus = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) { runCatching { serverFocus.requestFocus() } }
+    // Focus initial sur "Se connecter avec mon telephone" : evite la saisie fastidieuse a la telecommande.
+    LaunchedEffect(Unit) { runCatching { phoneFocus.requestFocus() } }
 
     Row(
         modifier = Modifier
@@ -114,6 +126,12 @@ fun LoginScreen(vm: LoginViewModel) {
             modifier = Modifier.weight(0.58f).fillMaxHeight().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
+            FrButton(
+                text = stringResource(R.string.login_with_phone),
+                onClick = { phoneMode = true },
+                enabled = !vm.loading,
+                modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus),
+            )
             FrTextField(
                 value = vm.server,
                 onValueChange = vm::onServerChange,

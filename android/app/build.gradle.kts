@@ -78,6 +78,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // QR code de la connexion depuis le telephone (encodeur pur Java, aucune permission).
+    implementation(libs.zxing.core)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

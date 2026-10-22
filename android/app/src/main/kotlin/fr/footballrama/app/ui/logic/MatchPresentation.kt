@@ -17,49 +17,28 @@ data class DaySections(val today: List<MatchResult>, val tomorrow: List<MatchRes
 
 /**
  * Matchs du jour et du lendemain dans le fuseau [zone] de l'appareil, tries par coup d'envoi.
- * Les matchs d'hier (soirees UTC) ou d'apres-demain presents dans la fenetre du calendrier sont ignores.
+ * Les matchs d'hier (soirees UTC) ou d'apres-demain presents dans la fenetre du calendrier sont ignores,
+ * ainsi que les matchs termines ([isFinished]).
  */
 fun splitByDay(matches: List<MatchResult>, now: Instant, zone: ZoneId): DaySections {
     val today = now.atZone(zone).toLocalDate()
     val tomorrow = today.plusDays(1)
-    val sorted = matches.sortedWith(compareBy<MatchResult> { it.kickoffUtcMillis }.thenBy { it.fixtureId })
+    val sorted = visibleMatches(matches, now).sortedWith(compareBy<MatchResult> { it.kickoffUtcMillis }.thenBy { it.fixtureId })
     val byDay = sorted.groupBy { Instant.ofEpochMilli(it.kickoffUtcMillis).atZone(zone).toLocalDate() }
     return DaySections(byDay[today].orEmpty(), byDay[tomorrow].orEmpty())
 }
 
-object Countries {
-    const val FRANCE = "FR"
-    const val UK = "UK"
-    private val ALIASES = mapOf("GB" to UK, "USA" to "US")
+/** Un match est masque [FINISHED_AFTER] apres son coup d'envoi (90 min + mi-temps + arrets + prolongations). */
+val FINISHED_AFTER: Duration = Duration.ofMinutes(150)
 
-    /** Cle de regroupement : code pays en majuscules (GB -> UK, USA -> US), sinon nom de categorie tel quel, "" si inconnu. */
-    fun key(country: String): String {
-        val c = country.trim()
-        if (c.isEmpty()) return ""
-        if (c.length in 2..4 && c.all { it in 'A'..'Z' || it in 'a'..'z' }) {
-            val up = c.uppercase(Locale.ROOT)
-            return ALIASES[up] ?: up
-        }
-        return c
-    }
+fun isFinished(match: MatchResult, now: Instant, after: Duration = FINISHED_AFTER): Boolean =
+    !now.isBefore(Instant.ofEpochMilli(match.kickoffUtcMillis).plus(after))
 
-    /** France, puis Royaume-Uni, puis les autres par ordre alphabetique de libelle (francais), "" en dernier. */
-    fun comparator(label: (String) -> String): Comparator<String> {
-        val collator = Collator.getInstance(Locale.FRENCH).apply { strength = Collator.PRIMARY }
-        return Comparator { a, b ->
-            val ra = rank(a)
-            val rb = rank(b)
-            if (ra != rb) ra - rb else collator.compare(label(a), label(b))
-        }
-    }
+/** Matchs encore a afficher (non termines). */
+fun visibleMatches(matches: List<MatchResult>, now: Instant): List<MatchResult> = matches.filterNot { isFinished(it, now) }
 
-    private fun rank(key: String) = when (key) {
-        FRANCE -> 0
-        UK -> 1
-        "" -> 3
-        else -> 2
-    }
-}
+/** Nom d'equipe pour les cartes : nom court du calendrier s'il existe, sinon nom complet. */
+fun cardTeamName(full: String, short: String?): String = short?.trim()?.takeIf { it.isNotEmpty() } ?: full
 
 data class CountrySection(val key: String, val channels: List<ChannelGroup>)
 

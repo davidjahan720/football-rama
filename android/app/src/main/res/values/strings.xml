@@ -22,6 +22,33 @@
     <string name="login_error_password">Saisissez votre mot de passe.</string>
     <string name="login_error_invalid">Identifiant, mot de passe ou adresse non valide.</string>
 
+    <!-- Connexion depuis le téléphone (QR code) -->
+    <string name="login_with_phone">Se connecter avec mon téléphone</string>
+    <string name="phone_title">Connexion avec votre téléphone</string>
+    <string name="phone_step_scan">1. Avec un téléphone connecté au même réseau Wi-Fi que le boîtier, scannez le QR code.</string>
+    <string name="phone_step_address">ou ouvrez l’adresse %1$s</string>
+    <string name="phone_step_code">2. Saisissez ce code de vérification sur la page du téléphone :</string>
+    <string name="phone_step_fill">3. Renseignez l’adresse du serveur, l’identifiant et le mot de passe, puis envoyez.</string>
+    <string name="phone_home_network">Utilisez cette option uniquement sur votre réseau domestique.</string>
+    <string name="phone_expires_in">Ce QR code expire dans %1$s</string>
+    <string name="phone_starting">Préparation de la connexion…</string>
+    <string name="phone_status_waiting">En attente des informations envoyées par le téléphone…</string>
+    <string name="phone_status_validating">Vérification des identifiants auprès de votre fournisseur…</string>
+    <plurals name="phone_status_wrong_code">
+        <item quantity="one">Code de vérification incorrect. %d essai restant.</item>
+        <item quantity="many">Code de vérification incorrect. %d essais restants.</item>
+        <item quantity="other">Code de vérification incorrect. %d essais restants.</item>
+    </plurals>
+    <string name="phone_status_failed">Échec de la connexion : %1$s</string>
+    <string name="phone_success">Connexion réussie. Ouverture de la liste des matchs…</string>
+    <string name="phone_no_network">Aucun réseau local détecté. Connectez le boîtier à votre box par Wi-Fi ou par câble Ethernet.</string>
+    <string name="phone_start_failed">Impossible de préparer la connexion depuis le téléphone. Réessayez ou utilisez la saisie à la télécommande.</string>
+    <string name="phone_expired">Ce QR code a expiré au bout de 5 minutes. Générez-en un nouveau.</string>
+    <string name="phone_locked">Trop d’essais incorrects : ce QR code est désactivé. Générez-en un nouveau.</string>
+    <string name="phone_new_qr">Nouveau QR code</string>
+    <string name="phone_manual">Saisie à la télécommande</string>
+    <string name="phone_qr_description">QR code de connexion depuis le téléphone</string>
+
     <!-- Adresse du serveur -->
     <string name="url_error_empty">Saisissez l’adresse du serveur fournie par votre fournisseur IPTV.</string>
     <string name="url_error_scheme">L’adresse doit commencer par http:// ou https://.</string>
@@ -125,33 +152,6 @@
     <string name="detail_none_for_country">Aucune chaîne de ce pays pour ce match</string>
     <string name="detail_not_found_help">Aucun programme correspondant à ce match n’a été trouvé dans le guide TV de votre fournisseur. Le guide peut être incomplet ou publié plus tard.</string>
     <string name="detail_country_header">%1$s (%2$d)</string>
-
-    <!-- Pays (préfixes courants des listes IPTV) -->
-    <string name="country_fr">France</string>
-    <string name="country_uk">Royaume-Uni</string>
-    <string name="country_be">Belgique</string>
-    <string name="country_ch">Suisse</string>
-    <string name="country_lu">Luxembourg</string>
-    <string name="country_ca">Canada</string>
-    <string name="country_de">Allemagne</string>
-    <string name="country_es">Espagne</string>
-    <string name="country_it">Italie</string>
-    <string name="country_pt">Portugal</string>
-    <string name="country_nl">Pays-Bas</string>
-    <string name="country_ie">Irlande</string>
-    <string name="country_us">États-Unis</string>
-    <string name="country_at">Autriche</string>
-    <string name="country_pl">Pologne</string>
-    <string name="country_tr">Turquie</string>
-    <string name="country_ma">Maroc</string>
-    <string name="country_dz">Algérie</string>
-    <string name="country_tn">Tunisie</string>
-    <string name="country_arabic">Chaînes arabes</string>
-    <string name="country_africa">Afrique</string>
-    <string name="country_se">Suède</string>
-    <string name="country_no">Norvège</string>
-    <string name="country_dk">Danemark</string>
-    <string name="country_other">Autres</string>
 
     <!-- Réglages -->
     <string name="settings_title">Réglages</string>

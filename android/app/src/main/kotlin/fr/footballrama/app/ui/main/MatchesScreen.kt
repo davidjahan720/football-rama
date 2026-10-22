@@ -51,6 +51,7 @@ import fr.footballrama.app.ui.ProgressBar
 import fr.footballrama.app.ui.logic.DaySections
 import fr.footballrama.app.ui.logic.ageOf
 import fr.footballrama.app.ui.logic.bestScore
+import fr.footballrama.app.ui.logic.cardTeamName
 import fr.footballrama.app.ui.logic.filterChannels
 import fr.footballrama.app.ui.theme.FrColors
 import fr.footballrama.app.ui.theme.FrText
@@ -204,9 +205,15 @@ private fun MatchCard(match: MatchResult, filter: String?, modifier: Modifier, o
     val best = bestScore(channels)
     FocusRowCard(onClick = onClick, modifier = modifier) {
         Text(Formats.time(match.kickoffUtcMillis), style = FrText.BodyStrong, color = FrColors.Text, modifier = Modifier.width(72.dp))
-        Badge(match.competitionName, FrColors.BadgeBg, FrColors.BadgeText, modifier = Modifier.widthIn(max = 230.dp))
+        Badge(match.competitionName, FrColors.BadgeBg, FrColors.BadgeText, modifier = Modifier.widthIn(max = 200.dp))
+        // Noms courts du calendrier ("Dortmund", "Slavia Praha") ; nom complet dans le detail.
+        // Points de suspension seulement si meme le nom court ne tient pas.
         Text(
-            stringResource(R.string.match_teams, match.home, match.away),
+            stringResource(
+                R.string.match_teams,
+                cardTeamName(match.home, match.homeShort),
+                cardTeamName(match.away, match.awayShort),
+            ),
             style = FrText.BodyStrong,
             color = FrColors.Text,
             maxLines = 1,

@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import fr.footballrama.app.ui.login.LoginScreen
 import fr.footballrama.app.ui.login.LoginViewModel
+import fr.footballrama.app.ui.login.PhoneLoginViewModel
 import fr.footballrama.app.ui.main.MainScreen
 import fr.footballrama.app.ui.main.MainViewModel
 import fr.footballrama.app.ui.theme.FootballRamaTheme
@@ -40,7 +42,13 @@ private fun AppRoot(container: AppContainer) {
     Box(Modifier.fillMaxSize().background(FrColors.Background)) {
         when (hasAccount) {
             null -> Unit // lecture du stockage en cours (quelques ms)
-            false -> LoginScreen(viewModel(factory = viewModelFactory { initializer { LoginViewModel(container) } }))
+            false -> {
+                val appContext = LocalContext.current.applicationContext
+                LoginScreen(
+                    viewModel(factory = viewModelFactory { initializer { LoginViewModel(container) } }),
+                    viewModel(factory = viewModelFactory { initializer { PhoneLoginViewModel(container, appContext::getString) } }),
+                )
+            }
             true -> MainScreen(viewModel(factory = viewModelFactory { initializer { MainViewModel(container) } }))
         }
     }

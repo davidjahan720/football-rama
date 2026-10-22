@@ -57,7 +57,8 @@ object ChannelNames {
         // Pas de flag inline U (Unicode) : non supporte par le moteur regex d'Android (ICU), crash au chargement de la classe
         Regex("""(?i)\b(?:FHD|UHD|HD|SD|LQ|HQ|4K|8K|HEVC|H265|50FPS|60FPS|RAW|BACKUP)\b""")
     private val MULTI_SPACE = Regex("""\s{2,}""")
-    private val COUNTRY_PREFIX = Regex("""^[^A-Za-z0-9|]*\|\s*([A-Za-z]{2,4})\s*\|\s*""")
+    // Code pays de 2 a 4 lettres, avec un tiret eventuel ("|EX-YU|").
+    private val COUNTRY_PREFIX = Regex("""^[^A-Za-z0-9|]*\|\s*([A-Za-z]{2,4}(?:-[A-Za-z]{2,4})?)\s*\|\s*""")
 
     /** `channel_group` : "|FR| CANAL+ LIVE 1 FHD" et "|FR| CANAL+ LIVE 1 HD" -> "|FR| CANAL+ LIVE 1". */
     fun group(name: String): String = MULTI_SPACE.replace(QUALITY_TAGS.replace(name, ""), " ").trim()

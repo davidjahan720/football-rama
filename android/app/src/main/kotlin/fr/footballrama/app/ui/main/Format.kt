@@ -2,12 +2,11 @@ package fr.footballrama.app.ui.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import fr.footballrama.app.R
-import fr.footballrama.app.ui.Messages
 import fr.footballrama.app.ui.logic.Age
+import fr.footballrama.app.ui.logic.Countries
 import fr.footballrama.core.matching.Score
 import java.time.Instant
 import java.time.ZoneId
@@ -40,11 +39,6 @@ fun updatedText(age: Age): String = when (age) {
 @Composable
 fun scoreLabel(score: Score): String = stringResource(if (score == Score.FORT) R.string.score_fort else R.string.score_moyen)
 
-/** Libelle francais d'une cle pays, utilisable hors composition (tri, Collator). */
+/** Libelle francais d'une cle pays (pur, voir [Countries.label]), utilisable hors composition (tri, Collator). */
 @Composable
-fun rememberCountryLabeler(): (String) -> String {
-    val resources = LocalResources.current
-    return remember(resources) {
-        { key: String -> Messages.countryLabel(key)?.let(resources::getString) ?: key }
-    }
-}
+fun rememberCountryLabeler(): (String) -> String = remember { Countries::label }

@@ -8,17 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.footballrama.app.AppContainer
 import fr.footballrama.app.R
-import fr.footballrama.app.data.CredentialStoreException
 import fr.footballrama.app.settings.UserAgentRules
 import fr.footballrama.app.ui.Messages
 import fr.footballrama.app.ui.logic.ServerUrlParser
 import fr.footballrama.core.xtream.XtreamAccount
-import fr.footballrama.core.xtream.XtreamException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Etat de l'ecran de connexion. Volontairement PAS de SavedStateHandle : le mot de passe (et les autres
@@ -54,6 +49,7 @@ class LoginViewModel(private val container: AppContainer) : ViewModel() {
         get() = (ServerUrlParser.parse(server) as? ServerUrlParser.Result.Valid)?.isCleartext == true
 
     private var job: Job? = null
+    private val service = LoginService(container)
 
     fun onServerChange(v: String) { server = v; error = null; info = null }
     fun onUsernameChange(v: String) { username = v; error = null }
@@ -111,26 +107,19 @@ class LoginViewModel(private val container: AppContainer) : ViewModel() {
         loading = true
         job = viewModelScope.launch {
             try {
-                // Verification des identifiants aupres du serveur IPTV de l'utilisateur (seule destination).
-                withContext(Dispatchers.IO) { container.xtreamClient.getLiveCategories(account) }
-                container.signIn(server, username, password)
-                // L'ecran va disparaitre : rien ne reste en memoire (et formulaire vide apres deconnexion).
-                server = ""
-                username = ""
-                password = ""
-                passwordVisible = false
-                advancedOpen = false
-                info = null
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: XtreamException) {
-                error = Messages.xtreamError(e.kind, e.httpCode)
-            } catch (_: CredentialStoreException) {
-                error = R.string.error_secure_storage
-            } catch (_: IllegalArgumentException) {
-                error = R.string.login_error_invalid
-            } catch (_: Exception) {
-                error = R.string.error_unknown
+                // Meme chemin que la connexion depuis le telephone (LoginService).
+                when (val outcome = service.verifyAndSignIn(server, username, password)) {
+                    is LoginService.Outcome.Error -> error = outcome.message
+                    LoginService.Outcome.Success -> {
+                        // L'ecran va disparaitre : rien ne reste en memoire (et formulaire vide apres deconnexion).
+                        server = ""
+                        username = ""
+                        password = ""
+                        passwordVisible = false
+                        advancedOpen = false
+                        info = null
+                    }
+                }
             } finally {
                 loading = false
             }
