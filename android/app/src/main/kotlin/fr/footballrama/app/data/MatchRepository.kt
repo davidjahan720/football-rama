@@ -161,6 +161,8 @@ class MatchRepository(
                 }
             }
 
+            // Guide vide (quelques octets) : cas reel d'un fournisseur en maintenance, a distinguer d'un guide illisible.
+            if (epgFile.length() < MIN_EPG_BYTES) throw RefreshFailure(RefreshError.EPG_EMPTY)
             progress(RefreshState.Step.EPG_PARSE, 0.7f)
             val size = epgFile.length().coerceAtLeast(1)
             var lastParse = -1
@@ -290,5 +292,7 @@ class MatchRepository(
 
     private companion object {
         const val TEMP_PREFIX = "epg-"
+        /** En dessous, le fichier ne peut contenir aucun programme (un XMLTV minimal fait deja plus). */
+        const val MIN_EPG_BYTES = 64L
     }
 }

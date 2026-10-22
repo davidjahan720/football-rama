@@ -47,6 +47,8 @@ enum class RefreshError(val retryable: Boolean) {
     TOO_LARGE(false),
     /** EPG XMLTV illisible, tronque ou refuse (entites XML). */
     EPG_INVALID(true),
+    /** Le fournisseur renvoie un guide TV vide (maintenance, limitation) : reessai automatique plus tard. */
+    EPG_EMPTY(true),
     /** Calendrier injoignable ou non verifiable et aucun cache valide. */
     FIXTURES_UNAVAILABLE(true),
     /** Calendrier expire (publisher arrete ?) et aucun cache valide. */

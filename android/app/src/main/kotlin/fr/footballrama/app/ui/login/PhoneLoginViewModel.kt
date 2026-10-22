@@ -112,7 +112,10 @@ class PhoneLoginViewModel(
             if (_state.value is UiState.Ready || _state.value == UiState.Starting) _state.value = UiState.Idle
             s
         }
-        validation?.cancel()
+        // Pas d'annulation de la verification en cours : apres un succes, l'enregistrement des identifiants fait
+        // quitter cet ecran (donc stop()) avant que la reponse "Connecte" parte vers le telephone, qui affichait
+        // "connexion interrompue". La verification est bornee (VALIDATION_TIMEOUT_MS) et le serveur n'accepte
+        // plus aucune connexion ; les reponses en cours ont le delai de grace du serveur.
         srv?.stop()
     }
 

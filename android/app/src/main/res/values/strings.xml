@@ -82,6 +82,7 @@
     <string name="error_invalid_response">Réponse inattendue du serveur de votre fournisseur. Réessayez plus tard.</string>
     <string name="error_too_large">Les données de votre fournisseur dépassent la taille autorisée par l’application.</string>
     <string name="error_epg_invalid">Le guide TV de votre fournisseur est illisible ou incomplet.</string>
+    <string name="error_epg_empty">Votre fournisseur ne fournit aucun guide TV pour le moment (maintenance ou limitation). Nouvel essai automatique plus tard.</string>
     <string name="error_fixtures_unavailable">Calendrier des matchs momentanément indisponible.</string>
     <string name="error_fixtures_expired">Le calendrier des matchs n’a pas été mis à jour récemment. Réessayez plus tard.</string>
     <string name="error_storage">Espace de stockage insuffisant sur l’appareil.</string>
