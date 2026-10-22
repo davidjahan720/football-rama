@@ -16,5 +16,7 @@ class FootballRamaApp : Application() {
         container.appScope.launch {
             if (container.credentialStore.hasAccount.first()) RefreshScheduler.schedulePeriodic(this@FootballRamaApp)
         }
+        // Mise a jour de l'app : au plus 1 verification / 12 h (aussi relancee par RefreshWorker).
+        container.appScope.launch { runCatching { container.updateManager.checkIfDue() } }
     }
 }

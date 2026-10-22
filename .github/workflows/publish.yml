@@ -1,4 +1,5 @@
-# Publishes the signed calendar (fixtures.json + fixtures.json.sig) to GitHub Pages.
+# Publishes the signed calendar (fixtures.json + fixtures.json.sig) and the signed app update manifest
+# (update.json + update.json.sig, from publisher/app_release.json) to GitHub Pages.
 # Contract: docs/CONTRAT_FIXTURES.md. Publisher: publisher/README.md.
 #
 # Required settings:
@@ -53,6 +54,18 @@ jobs:
           FIXTURES_PUBLIC_KEY: ${{ vars.FIXTURES_PUBLIC_KEY }}
           SITE_DIR: ${{ runner.temp }}/site
         run: python -m football_rama_publisher publish --out "$SITE_DIR" --verify-key "$FIXTURES_PUBLIC_KEY"
+
+      # App update manifest: publisher/app_release.json -> update.json + update.json.sig (same key, same format).
+      # Strict validation (https://github.com/davidjahan720/football-rama/releases/download/ prefix only, sha256 = 64 hex,
+      # version_code > 0). Absent file or placeholder (sha256 "") -> nothing published, exit 0.
+      # An INVALID manifest fails this step but must not block the calendar: continue-on-error, nothing is written.
+      - name: Publish app update manifest (update.json)
+        continue-on-error: true
+        env:
+          FIXTURES_SIGNING_KEY: ${{ secrets.FIXTURES_SIGNING_KEY }}
+          FIXTURES_PUBLIC_KEY: ${{ vars.FIXTURES_PUBLIC_KEY }}
+          SITE_DIR: ${{ runner.temp }}/site
+        run: python -m football_rama_publisher publish-update --manifest app_release.json --out "$SITE_DIR" --verify-key "$FIXTURES_PUBLIC_KEY"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

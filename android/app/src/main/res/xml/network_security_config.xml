@@ -7,6 +7,8 @@
   - Les hebergements possibles du calendrier signe (GitHub Pages, Cloudflare Pages) sont en HTTPS obligatoire.
     En plus, FixturesClient refuse toute URL non https (ConnectionSpec sans CLEARTEXT) : la protection ne depend
     pas de cette liste de domaines.
+  - Mises a jour de l'app : github.com et *.githubusercontent.com en HTTPS uniquement ; ApkDownloader refuse en
+    plus tout saut de redirection non https ou vers un autre hote.
   - Seules les autorites de certification systeme sont acceptees (pas les CA ajoutees par l'utilisateur).
 -->
 <network-security-config xmlns:tools="http://schemas.android.com/tools">
@@ -18,6 +20,8 @@
     </base-config>
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">github.io</domain>
+        <!-- Mises a jour : releases GitHub (github.com) puis CDN objects.githubusercontent.com (couvert ci-dessous). -->
+        <domain includeSubdomains="true">github.com</domain>
         <domain includeSubdomains="true">githubusercontent.com</domain>
         <domain includeSubdomains="true">pages.dev</domain>
     </domain-config>

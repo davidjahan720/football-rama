@@ -6,15 +6,21 @@ import fr.footballrama.app.data.CredentialStore
 import fr.footballrama.app.data.MatchRepository
 import fr.footballrama.app.data.RefreshScheduler
 import fr.footballrama.app.settings.UiPreferences
+import fr.footballrama.app.update.UpdateManager
+import fr.footballrama.app.update.UpdateState
 import fr.footballrama.core.epg.XmltvParser
 import fr.footballrama.core.fixtures.FixturesClient
 import fr.footballrama.core.fixtures.FixturesVerifier
 import fr.footballrama.core.matching.MatchPipeline
+import fr.footballrama.core.update.ApkDownloader
+import fr.footballrama.core.update.UpdateManifestClient
+import fr.footballrama.core.update.UpdateManifestVerifier
 import fr.footballrama.core.xtream.XtreamAccount
 import fr.footballrama.core.xtream.XtreamClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -61,6 +67,28 @@ class AppContainer(private val context: Context) {
             scope = appScope,
         )
     }
+
+    /**
+     * Mise a jour de l'app (update.json signe + APK GitHub Releases, voir docs/CONTRAT_FIXTURES.md).
+     * Meme hebergement et memes cles publiques que le calendrier ; aucun identifiant n'est envoye.
+     */
+    val updateManager: UpdateManager by lazy {
+        UpdateManager(
+            context = context,
+            manifestClient = UpdateManifestClient(
+                baseUrl = BuildConfig.FIXTURES_BASE_URL,
+                baseClient = okHttp,
+                httpCacheDir = File(context.cacheDir, "http-update"),
+            ),
+            verifier = UpdateManifestVerifier(FixturesVerifier(FixturesVerifier.parseKeyList(BuildConfig.FIXTURES_PUBLIC_KEYS))),
+            downloader = ApkDownloader(okHttp),
+            scope = appScope,
+            currentVersionCode = BuildConfig.VERSION_CODE,
+        )
+    }
+
+    /** Etat de mise a jour de l'app, pour un bandeau discret sur l'ecran principal (voir UpdateBanner). */
+    val updateState: StateFlow<UpdateState> get() = updateManager.state
 
     /** Enregistre les identifiants puis planifie les rafraichissements. Voir [CredentialStore.save]. */
     suspend fun signIn(serverUrl: String, username: String, password: String): XtreamAccount {
