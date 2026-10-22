@@ -5,6 +5,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import fr.footballrama.app.R
+import fr.footballrama.app.data.RefreshError
+import fr.footballrama.app.data.RefreshState
+import fr.footballrama.app.ui.Messages
 import fr.footballrama.app.ui.logic.Age
 import fr.footballrama.app.ui.logic.Countries
 import fr.footballrama.core.matching.Score
@@ -34,6 +37,17 @@ fun updatedText(age: Age): String = when (age) {
     is Age.Minutes -> pluralStringResource(R.plurals.updated_minutes_ago, age.value, age.value)
     is Age.Hours -> pluralStringResource(R.plurals.updated_hours_ago, age.value, age.value)
     is Age.Older -> stringResource(R.string.updated_on, Formats.dateTime(age.at))
+}
+
+/** Message d'erreur, avec l'heure du prochain essai quand le fournisseur limite les demandes. */
+@Composable
+fun refreshErrorText(state: RefreshState.Error): String {
+    val retryAt = state.retryAt
+    return if (state.type == RefreshError.RATE_LIMITED && retryAt != null) {
+        stringResource(R.string.error_rate_limited_until, Formats.time(retryAt.toEpochMilli()))
+    } else {
+        stringResource(Messages.refreshError(state.type))
+    }
 }
 
 @Composable

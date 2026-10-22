@@ -2,7 +2,8 @@ package fr.footballrama.app.data
 
 import fr.footballrama.core.epg.ChannelEpgFallback
 import fr.footballrama.core.epg.EpgParseException
-import fr.footballrama.core.epg.SportChannels
+import fr.footballrama.core.epg.Broadcasters
+import fr.footballrama.core.epg.ChannelEpgState
 import fr.footballrama.core.fixtures.DataAttribution
 import fr.footballrama.core.fixtures.Fixtures
 import fr.footballrama.core.fixtures.FixturesClient
@@ -36,7 +37,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.coroutineContext
 
@@ -60,6 +63,7 @@ class MatchRepository(
     private val signatureRetryDelaysMs: List<Long> = listOf(20_000, 60_000),
     /** Repli "guide chaine par chaine" quand xmltv.php est vide ou illisible. */
     private val channelFallback: ChannelEpgFallback = ChannelEpgFallback(dispatcher = io),
+    private val zone: ZoneId = ZoneId.systemDefault(),
 ) {
     private val _state = MutableStateFlow<RefreshState>(RefreshState.Idle)
     val state: StateFlow<RefreshState> = _state.asStateFlow()
@@ -78,6 +82,9 @@ class MatchRepository(
     private val noXmltvMarker = File(filesDir, "xmltv_unavailable")
     private val reportFile = File(filesDir, "matches.json")
 
+    /** Cache du guide par chaine + date "pas avant" du fournisseur (aucune donnee personnelle). */
+    private val fallbackStateFile = File(filesDir, "epg_channels.json")
+
     init {
         scope.launch(io) {
             cleanupTempFiles()
@@ -94,8 +101,10 @@ class MatchRepository(
     /**
      * Rafraichissement complet. Si un rafraichissement est deja en cours, attend sa fin puis en relance un
      * seulement si le resultat a plus de [minIntervalMs].
+     * @param manual demande explicite de l'utilisateur (bouton Actualiser) : le repli chaine par chaine peut alors
+     *   tourner avant l'intervalle minimal automatique, mais jamais avant la date imposee par le fournisseur.
      */
-    suspend fun refresh(minIntervalMs: Long = 60_000): RefreshState = withContext(io) {
+    suspend fun refresh(minIntervalMs: Long = 60_000, manual: Boolean = false): RefreshState = withContext(io) {
         mutex.withLock {
             activeRefresh = coroutineContext[Job]
             val current = _state.value
@@ -105,9 +114,9 @@ class MatchRepository(
                 return@withLock current
             }
             val result = try {
-                doRefresh()
+                doRefresh(manual)
             } catch (e: RefreshFailure) {
-                RefreshState.Error(e.error, readReport())
+                RefreshState.Error(e.error, readReport(), e.retryAt)
             } catch (e: CancellationException) {
                 _state.value = readReport()?.let { RefreshState.Error(RefreshError.UNKNOWN, it) } ?: RefreshState.Idle
                 activeRefresh = null
@@ -132,6 +141,7 @@ class MatchRepository(
             credentialStore.clear()
             reportFile.delete()
             noXmltvMarker.delete()
+            fallbackStateFile.delete()
             cleanupTempFiles()
             _state.value = RefreshState.Idle
         }
@@ -139,12 +149,16 @@ class MatchRepository(
 
     // ------------------------------------------------------------------ etapes
 
-    private class RefreshFailure(val error: RefreshError) : Exception(error.name)
+    private class RefreshFailure(val error: RefreshError, val retryAt: Instant? = null) : Exception(error.name)
 
-    private suspend fun doRefresh(): RefreshState {
+    private suspend fun doRefresh(manual: Boolean): RefreshState {
         val job = coroutineContext[Job]
         if (!verifier.isConfigured || !fixturesClient.isConfigured) throw RefreshFailure(RefreshError.NOT_CONFIGURED)
         val account = credentialStore.load() ?: throw RefreshFailure(RefreshError.NO_ACCOUNT)
+        // Fournisseur qui a demande de ralentir (HTTP 429) : AUCUNE requete Xtream avant la date indiquee.
+        readFallbackState().notBefore()?.takeIf { it.isAfter(clock.instant()) }?.let {
+            throw RefreshFailure(RefreshError.RATE_LIMITED, it)
+        }
 
         progress(RefreshState.Step.FIXTURES, 0f)
         val (fixtures, warning) = loadFixtures()
@@ -155,11 +169,18 @@ class MatchRepository(
 
         val epgFile = File(cacheDir, "$TEMP_PREFIX${System.nanoTime()}.xml")
         try {
-            val report = readXmltv(account, epgFile, fixtures, streams, categories, job)
-                ?: runChannelFallback(account, fixtures, streams, categories)
+            val xmltv = readXmltv(account, epgFile, fixtures, streams, categories, job)
+            val (report, limitedUntil) = xmltv?.let { it to null }
+                ?: runChannelFallback(account, fixtures, streams, categories, manual)
             progress(RefreshState.Step.MATCHING, 0.97f)
             writeReport(report)
-            return RefreshState.Success(report, Instant.ofEpochMilli(report.updatedAtMillis), fromCache = false, warning = warning)
+            return RefreshState.Success(
+                report,
+                Instant.ofEpochMilli(report.updatedAtMillis),
+                fromCache = false,
+                warning = if (limitedUntil != null) RefreshState.Warning.PROVIDER_LIMITED else warning,
+                retryAt = limitedUntil,
+            )
         } finally {
             epgFile.delete()
         }
@@ -212,6 +233,7 @@ class MatchRepository(
                     if (received >= MIN_EPG_BYTES) noXmltvMarker.delete()
                     return null
                 }
+                e.isTooManyRequests() -> throw rateLimited(e)
                 else -> throw RefreshFailure(toRefreshError(e))
             }
         }
@@ -252,50 +274,84 @@ class MatchRepository(
     }
 
     /**
-     * Repli : guide chaine par chaine (get_short_epg) sur les chaines sport, requetes espacees et limitees
-     * (voir [ChannelEpgFallback]). Aucun programme recupere -> EPG_EMPTY (ou l'erreur qui a tout bloque).
+     * Repli : guide chaine par chaine sur les diffuseurs listes ([Broadcasters]), budget dur de requetes, cache
+     * par chaine, arret au premier 429 (voir [ChannelEpgFallback]). Aucun programme -> EPG_EMPTY (ou l'erreur
+     * qui a tout bloque, dont RATE_LIMITED).
      */
     private suspend fun runChannelFallback(
         account: XtreamAccount,
         fixtures: Fixtures,
         streams: List<LiveStream>,
         categories: List<LiveCategory>,
-    ): MatchReport {
+        manual: Boolean,
+    ): Pair<MatchReport, Instant?> {
         progress(RefreshState.Step.EPG_CHANNELS, 0.15f)
-        val selected = SportChannels.select(streams, categories)
-        if (selected.isEmpty()) throw RefreshFailure(RefreshError.EPG_EMPTY)
+        val candidates = Broadcasters.select(streams, categories)
+        if (candidates.isEmpty()) throw RefreshFailure(RefreshError.EPG_EMPTY)
+        val now = clock.instant()
         val lastPct = AtomicInteger(-1)
-        val result = channelFallback.fetch(
-            selected,
-            pipeline.filterFor(fixtures),
-            fetchOne = { s -> xtreamClient.getShortEpg(account, s.streamId, channelFallback.limit) },
+        val source = object : ChannelEpgFallback.Source {
+            override fun simpleDataTable(stream: LiveStream) = xtreamClient.getSimpleDataTable(account, stream.streamId)
+            override fun shortEpg(stream: LiveStream, limit: Int) = xtreamClient.getShortEpg(account, stream.streamId, limit)
+        }
+        val result = channelFallback.run(
+            state = readFallbackState(),
+            candidates = candidates,
+            filter = pipeline.filterFor(fixtures),
+            now = now,
+            coverTarget = coverTarget(now),
+            manual = manual,
+            source = source,
         ) { done, total ->
             val pct = done * 100 / total.coerceAtLeast(1)
             if (lastPct.getAndSet(pct) != pct) {
                 _state.value = RefreshState.Loading(RefreshState.Step.EPG_CHANNELS, 0.15f + 0.8f * pct / 100f)
             }
         }
+        writeFallbackState(result.state)
         if (result.listingsTotal == 0) {
+            if (result.retryAt != null) throw RefreshFailure(RefreshError.RATE_LIMITED, result.retryAt)
             throw RefreshFailure(
-                if (result.channelsSucceeded > 0) {
-                    RefreshError.EPG_EMPTY
-                } else {
-                    when (result.stopReason) {
-                        ChannelEpgFallback.StopReason.AUTH -> RefreshError.AUTH
-                        ChannelEpgFallback.StopReason.THROTTLED -> RefreshError.SERVER
-                        ChannelEpgFallback.StopReason.NETWORK ->
-                            if (result.lastError == XtreamException.Kind.TIMEOUT) RefreshError.TIMEOUT else RefreshError.NETWORK
-                        else -> RefreshError.EPG_EMPTY
-                    }
+                when (result.stopReason) {
+                    ChannelEpgFallback.StopReason.AUTH -> RefreshError.AUTH
+                    ChannelEpgFallback.StopReason.SERVER -> RefreshError.SERVER
+                    ChannelEpgFallback.StopReason.NETWORK ->
+                        if (result.lastError == XtreamException.Kind.TIMEOUT) RefreshError.TIMEOUT else RefreshError.NETWORK
+                    else -> RefreshError.EPG_EMPTY
                 },
             )
         }
-        return pipeline.runOnProgrammes(
+        val report = pipeline.runOnProgrammes(
             fixtures, result.data, streams, categories, clock.instant(),
             elapsedMillis = result.elapsedMillis,
-            channelsQueried = result.channelsQueried,
+            channelsQueried = result.requests,
             channelsFailed = result.channelsFailed,
         )
+        return report to result.retryAt
+    }
+
+    /** Une chaine est "couverte" si son guide connu va jusqu'au lendemain 22:00 (heure de l'appareil). */
+    private fun coverTarget(now: Instant): Instant =
+        now.atZone(zone).toLocalDate().plusDays(1).atTime(22, 0).atZone(zone).toInstant()
+
+    private fun readFallbackState(): ChannelEpgState =
+        ChannelEpgState.decode(runCatching { fallbackStateFile.takeIf { it.isFile }?.readText() }.getOrNull())
+
+    private fun writeFallbackState(state: ChannelEpgState) {
+        try {
+            atomicWrite(fallbackStateFile, ChannelEpgState.encode(state).toByteArray())
+        } catch (_: IOException) {
+            // Non bloquant : le resultat de ce rafraichissement reste valable.
+        }
+    }
+
+    /** HTTP 429 sur n'importe quel appel Xtream : date "pas avant" persistante (Retry-After, sinon 1 h). */
+    private fun rateLimited(e: XtreamException): RefreshFailure {
+        val now = clock.instant()
+        val wait = e.retryAfterSeconds?.let { Duration.ofSeconds(it) } ?: Duration.ofHours(1)
+        val until = now.plus(wait.coerceIn(Duration.ofMinutes(1), Duration.ofHours(24)))
+        writeFallbackState(readFallbackState().copy(notBeforeMillis = until.toEpochMilli()))
+        return RefreshFailure(RefreshError.RATE_LIMITED, until)
     }
 
     private fun progress(step: RefreshState.Step, value: Float) {
@@ -306,8 +362,11 @@ class MatchRepository(
         block()
     } catch (e: XtreamException) {
         currentCoroutineContext().ensureActive() // annulation : on propage la CancellationException
+        if (e.isTooManyRequests()) throw rateLimited(e)
         throw RefreshFailure(toRefreshError(e))
     }
+
+    private fun XtreamException.isTooManyRequests() = kind == XtreamException.Kind.HTTP && httpCode == 429
 
     private fun toRefreshError(e: XtreamException): RefreshError =
         when (e.kind) {

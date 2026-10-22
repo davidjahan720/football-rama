@@ -333,7 +333,7 @@ private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, 
             if (report != null) {
                 Banner(
                     kind = BannerKind.ERROR,
-                    text = stringResource(Messages.refreshError(state.type)),
+                    text = refreshErrorText(state),
                     secondary = updated?.let { stringResource(R.string.showing_previous_data, it) },
                     action = if (state.type == RefreshError.AUTH) {
                         // Identifiants refuses : reessayer ne sert a rien, il faut pouvoir les ressaisir
@@ -348,6 +348,12 @@ private fun StatusArea(state: RefreshState, report: MatchReport?, now: Instant, 
         }
         is RefreshState.Success -> {
             when {
+                state.warning == RefreshState.Warning.PROVIDER_LIMITED && state.retryAt != null ->
+                    Banner(
+                        kind = BannerKind.WARNING,
+                        text = stringResource(R.string.warning_provider_limited, Formats.time(state.retryAt.toEpochMilli())),
+                        secondary = updated,
+                    )
                 state.warning == RefreshState.Warning.FIXTURES_FROM_CACHE ->
                     Banner(kind = BannerKind.WARNING, text = stringResource(R.string.warning_fixtures_cache), secondary = updated)
                 state.fromCache && updated != null ->
@@ -374,7 +380,7 @@ private fun NoDataState(state: RefreshState, onRetry: () -> Unit, onChangeAccoun
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        stringResource(Messages.refreshError(state.type)),
+                        refreshErrorText(state),
                         style = FrText.Body,
                         color = FrColors.ErrorText,
                         textAlign = TextAlign.Center,

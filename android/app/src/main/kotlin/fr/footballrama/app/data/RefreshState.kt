@@ -16,10 +16,17 @@ sealed interface RefreshState {
         /** true = resultat relu depuis le disque (pas encore rafraichi dans cette session). */
         val fromCache: Boolean,
         val warning: Warning? = null,
+        /** [Warning.PROVIDER_LIMITED] : heure apres laquelle le guide pourra etre complete. */
+        val retryAt: Instant? = null,
     ) : RefreshState
 
     /** [lastData] = dernier resultat valide, a afficher avec un bandeau d'erreur. */
-    data class Error(val type: RefreshError, val lastData: MatchReport?) : RefreshState
+    data class Error(
+        val type: RefreshError,
+        val lastData: MatchReport?,
+        /** [RefreshError.RATE_LIMITED] : nouvel essai possible apres cette heure. */
+        val retryAt: Instant? = null,
+    ) : RefreshState
 
     /** [EPG_CHANNELS] : repli "guide chaine par chaine" quand xmltv.php est vide ou illisible. */
     enum class Step { FIXTURES, CHANNELS, EPG_DOWNLOAD, EPG_PARSE, EPG_CHANNELS, MATCHING }
@@ -27,6 +34,9 @@ sealed interface RefreshState {
     enum class Warning {
         /** Le calendrier distant n'a pas pu etre verifie (reseau, CDN incoherent) : calendrier en cache utilise. */
         FIXTURES_FROM_CACHE,
+
+        /** Le fournisseur a limite les demandes (HTTP 429) pendant le guide chaine par chaine : resultat partiel. */
+        PROVIDER_LIMITED,
     }
 }
 
@@ -48,6 +58,8 @@ enum class RefreshError(val retryable: Boolean) {
     TOO_LARGE(false),
     /** EPG XMLTV illisible, tronque ou refuse (entites XML). */
     EPG_INVALID(true),
+    /** Le fournisseur limite les demandes (HTTP 429) : aucune requete avant [RefreshState.Error.retryAt]. */
+    RATE_LIMITED(false),
     /** Le fournisseur renvoie un guide TV vide (maintenance, limitation) : reessai automatique plus tard. */
     EPG_EMPTY(true),
     /** Calendrier injoignable ou non verifiable et aucun cache valide. */

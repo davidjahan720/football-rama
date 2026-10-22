@@ -99,7 +99,7 @@ fun SettingsScreen(
                     style = FrText.Label,
                     color = FrColors.InfoText,
                 )
-                is RefreshState.Error -> Text(stringResource(Messages.refreshError(state.type)), style = FrText.Label, color = FrColors.ErrorText)
+                is RefreshState.Error -> Text(refreshErrorText(state), style = FrText.Label, color = FrColors.ErrorText)
                 else -> Unit
             }
             FrButton(
