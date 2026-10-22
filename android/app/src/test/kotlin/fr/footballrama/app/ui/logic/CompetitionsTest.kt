@@ -38,10 +38,11 @@ class CompetitionsTest {
     // ------------------------------------------------------------------ libelles
 
     @Test
-    fun `libelles francais des 9 competitions`() {
+    fun `libelles francais des 11 competitions`() {
         val expected = mapOf(
             "FL1" to "Ligue 1", "PL" to "Premier League", "CL" to "Ligue des champions", "BL1" to "Bundesliga",
             "SA" to "Serie A", "PD" to "LaLiga", "DED" to "Eredivisie", "PPL" to "Liga Portugal", "ELC" to "Championship",
+            "UEL" to "Ligue Europa", "UECL" to "Conference League",
         )
         expected.forEach { (code, label) -> assertEquals(label, Competitions.label(code, "ignored")) }
         assertEquals(expected.keys, Competitions.knownCodes)

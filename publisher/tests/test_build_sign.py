@@ -72,7 +72,7 @@ def test_invalid_entries_skipped(raw_matches):
         {**good, "id": True},
         {**good, "utcDate": "garbage"},
         {**good, "utcDate": "2026-10-20T19:00:00"},         # no timezone
-        {**good, "competition": {"code": "EL"}},           # Europa League: paid plan, not published
+        {**good, "competition": {"code": "ECL"}},          # football-data Conference League code: never published
         {**good, "competition": {"code": "BSA"}},          # free but out of scope (Brazil)
         {**good, "homeTeam": {"name": None}},                # TBD knock-out
         {**good, "awayTeam": {"name": "   "}},
@@ -90,7 +90,8 @@ def test_document_matches_contract(raw_matches):
     assert doc["window"] == {"from": "2026-10-20T00:00:00Z", "to": "2026-10-22T03:00:00Z"}
     assert doc["competitions"] == {"PL": "Premier League", "FL1": "Ligue 1", "CL": "Ligue des champions",
                                    "BL1": "Bundesliga", "SA": "Serie A", "PD": "LaLiga", "DED": "Eredivisie",
-                                   "PPL": "Liga Portugal", "ELC": "Championship"}
+                                   "PPL": "Liga Portugal", "ELC": "Championship",
+                                   "UEL": "Ligue Europa", "UECL": "Conference League"}
     assert set(doc["matching"]) == {"competition_keywords", "excluded_title_words"}
     assert set(doc["matching"]["competition_keywords"]) == set(doc["competitions"])
     psg = next(m for m in doc["matches"] if m["id"] == 575367)

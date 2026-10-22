@@ -63,7 +63,13 @@ Règles :
 
 ## Compétitions (2026-10-22)
 
-Toutes sont incluses dans l'offre **gratuite** de football-data.org. Le publisher les demande en **une seule requête** par exécution (`competitions=PL,FL1,CL,BL1,SA,PD,DED,PPL,ELC`). Europa League et Conference League (offre payante) ne sont pas couvertes. Le schéma ne change pas (`schema` reste 1) : seules les valeurs de `competitions` et `matching` s'allongent.
+Les 9 compétitions nationales et la Ligue des champions sont incluses dans l'offre **gratuite** de football-data.org. Le publisher les demande en **une seule requête** par exécution (`competitions=PL,FL1,CL,BL1,SA,PD,DED,PPL,ELC`). Le schéma ne change pas (`schema` reste 1) : seules les valeurs de `competitions` et `matching` s'allongent.
+
+**Ligue Europa (`UEL`) et Conference League (`UECL`), ajoutées le 2026-10-22**, sont payantes chez football-data.org. Elles viennent du flux JSON public qui alimente uefa.com/match-calendar (`https://match.uefa.com/v5/matches`, `competitionId` 14 et 2019, une requête par compétition, sans clé). Ce flux **n'est pas une API documentée** : il peut changer ou disparaître sans préavis, et sa réutilisation n'est pas autorisée explicitement par l'UEFA (à revoir avant tout usage commercial). Il est donc **facultatif** : en cas d'échec (réseau, HTTP, format), le publisher publie le calendrier football-data sans ces deux compétitions et l'indique dans le journal.
+
+- Identifiant publié = `1 000 000 000 + id UEFA` : aucune collision avec les identifiants football-data, et la valeur tient dans un entier 32 bits.
+- Statuts conservés : `UPCOMING` (→ `TIMED`) et `LIVE` (→ `IN_PLAY`). Les autres (`FINISHED`, reports…) et les équipes pas encore connues (`isPlaceHolder`) sont écartés.
+- Noms : `name` = nom officiel anglais, `short` = nom court anglais. Les noms UEFA dans les autres langues à alphabet latin (FR, DE, ES, IT, PT) s'ajoutent aux `aliases` (ex. « lech poznan », « levski sofia »), avec les mêmes filtres que les autres alias (4 caractères minimum, mots génériques exclus).
 
 | Code | Nom publié | Mots-clés de compétition (`competition_keywords`) |
 |---|---|---|
@@ -76,11 +82,14 @@ Toutes sont incluses dans l'offre **gratuite** de football-data.org. Le publishe
 | `DED` | Eredivisie | eredivisie |
 | `PPL` | Liga Portugal | liga portugal, primeira liga, liga betclic, liga portugal betclic |
 | `ELC` | Championship | efl championship, sky bet championship, skybet championship, efl |
+| `UEL` | Ligue Europa | europa league, uefa europa league, ligue europa, liga europa, europa liga, uel |
+| `UECL` | Conference League | conference league, uefa conference league, ligue conference, europa conference league, conference liga, uecl |
 
 ### Mots-clés de compétition : risques évalués
 
 Un mot-clé ne suffit jamais seul : il ne compte qu'avec **une équipe du match** trouvée dans un programme de la fenêtre du coup d'envoi (score `moyen`).
 
+- **« europa » et « conference » seuls sont écartés** : « conférence de presse », « Eastern Conference » (NBA), chaînes « Europa »…
 - **« championship » seul est écarté** : il désigne aussi la RFU Championship (rugby : Coventry, Doncaster…), la Championship de rugby à XIII, la Scottish Championship, des tournois de golf ou de fléchettes. Combiné au token d'une ville anglaise (« coventry », « norwich »), il produirait des faux positifs. « efl » n'existe qu'en football anglais ; un club ne joue qu'un match par jour, donc « efl » + nom du club au moment du coup d'envoi désigne ce match.
 - **« serie a »** désigne aussi la Série A brésilienne (et équatorienne) : les clubs italiens n'ont pas d'homonyme brésilien couvert par leurs alias (« Internacional » ≠ « inter », mot entier) et les horaires diffèrent ; « calcio » et « lega serie a » ajoutent du contexte italien.
 - **« laliga » / « bundesliga »** apparaissent dans « LaLiga Hypermotion » / « 2. Bundesliga » : ces titres sont exclus par `excluded_title_words` (voir ci-dessous).

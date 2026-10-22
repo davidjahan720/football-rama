@@ -28,6 +28,13 @@ def no_network(monkeypatch):
     monkeypatch.setattr(socket, "create_connection", guard)
 
 
+@pytest.fixture(autouse=True)
+def no_uefa(monkeypatch):
+    """The optional uefa.com source answers an empty list unless a test passes its own opener / fetch_uefa."""
+    from football_rama_publisher import uefa
+    monkeypatch.setattr(uefa, "_urlopen", lambda req, timeout: FakeResponse(b"[]"))
+
+
 @pytest.fixture(scope="session")
 def api_payload() -> dict:
     return json.loads((DATA / "matches_sample.json").read_text(encoding="utf-8"))

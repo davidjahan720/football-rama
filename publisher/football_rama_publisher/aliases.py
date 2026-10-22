@@ -10,7 +10,7 @@ from .normalize import norm
 ALIASES_FILE = Path(__file__).with_name("aliases.json")
 
 # football-data.org codes, all included in the free plan: ONE API call per run (competitions=<all codes>).
-# Europa League / Conference League are paid plans: not included.
+# Europa League / Conference League are paid plans there: they come from uefa.com instead (UEFA_COMPETITIONS).
 COMPETITIONS = {
     "PL": "Premier League",
     "FL1": "Ligue 1",
@@ -22,6 +22,14 @@ COMPETITIONS = {
     "PPL": "Liga Portugal",
     "ELC": "Championship",
 }
+
+# From the public uefa.com match feed (uefa.py), optional: absent from fixtures.json if UEFA fails.
+UEFA_COMPETITIONS = {
+    "UEL": "Ligue Europa",
+    "UECL": "Conference League",
+}
+
+ALL_COMPETITIONS = {**COMPETITIONS, **UEFA_COMPETITIONS}
 
 # Context words: they only count together with ONE team found in a programme of the kickoff window
 # ("moyen" score). Ambiguous words alone are avoided (docs/CONTRAT_FIXTURES.md, "Mots-cles de competition").
@@ -38,6 +46,10 @@ COMPETITION_KEYWORDS = {
     # No bare "championship": RFU / rugby league / Scottish Championship, golf, darts... would combine with
     # English city tokens ("coventry", "norwich"). "efl" only exists in English football.
     "ELC": ["efl championship", "sky bet championship", "skybet championship", "efl"],
+    # No bare "europa" / "conference" ("conference de presse", "Eastern Conference"...)
+    "UEL": ["europa league", "uefa europa league", "ligue europa", "liga europa", "europa liga", "uel"],
+    "UECL": ["conference league", "uefa conference league", "ligue conference", "europa conference league",
+             "conference liga", "uecl"],
 }
 
 # Programmes to ignore: youth, women, highlights, magazines, second divisions sharing a keyword (normalised)
@@ -125,6 +137,10 @@ def team_aliases(team: dict) -> list[str]:
     listed = set(extra_aliases().get(core, ()))
     explicit = listed | {core}
     aliases.update(explicit)
+    # Names in other languages (uefa.com feed only: "Bale" for Basel, "Etoile rouge" for Crvena zvezda...)
+    for alt in team.get("altNames") or ():
+        alt_norm = norm(alt) if isinstance(alt, str) else ""
+        aliases.update({alt_norm, _core_name(alt_norm)})
     # Too-short aliases = false positives (except explicit nicknames and the club short name, e.g. "psv").
     # A generic word alone ("Athletic Club" -> "athletic", also Charlton / Wigan Athletic) is dropped,
     # unless aliases.json lists it on purpose.

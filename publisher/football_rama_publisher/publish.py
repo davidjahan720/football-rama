@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Callable
 
-from . import client
+from . import client, uefa
 from .aliases import COMPETITIONS
 from .build import Window, build_document, serialize
 from .signing import load_public_key, sign, verify
@@ -35,15 +35,22 @@ def _write_atomic(path: Path, data: bytes) -> None:
 
 
 def publish(out_dir: Path, token: str, private_key, *, verify_key_b64: str | None = None,
-            now: datetime | None = None, fetch: Callable = client.fetch_matches) -> dict:
+            now: datetime | None = None, fetch: Callable = client.fetch_matches,
+            fetch_uefa: Callable | None = None) -> dict:
     """Publish fixtures.json + fixtures.json.sig into out_dir. Returns the document.
 
-    Nothing is written if the API call, the build or the signature fails.
+    Nothing is written if the football-data call, the build or the signature fails.
+    The uefa.com feed (Europa League / Conference League) is optional: its failure only drops these matches.
     """
     now = (now or datetime.now(UTC)).astimezone(UTC)
     window = Window.for_now(now)
     # dateTo is inclusive (day granularity): J+2 covers the 00:00-03:00 UTC tail of the window
-    raw = fetch(token, window.start.date(), (window.start + timedelta(days=2)).date(), list(COMPETITIONS))
+    date_from, date_to = window.start.date(), (window.start + timedelta(days=2)).date()
+    raw = fetch(token, date_from, date_to, list(COMPETITIONS))
+    try:
+        raw = raw + (fetch_uefa or uefa.fetch_uefa_matches)(date_from, date_to)
+    except client.FetchError as e:
+        log.warning("source UEFA indisponible, publie sans Ligue Europa / Conference League : %s", e)
 
     document = build_document(raw, now)
     data = serialize(document)

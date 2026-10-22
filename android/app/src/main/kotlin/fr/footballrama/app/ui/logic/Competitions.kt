@@ -16,12 +16,14 @@ object Competitions {
     data class Style(val background: Long, val content: Long)
 
     /** Ordre d'affichage des filtres ; les codes inconnus suivent, par ordre alphabetique de libelle. */
-    val ORDER = listOf("FL1", "PL", "CL", "BL1", "SA", "PD", "DED", "PPL", "ELC")
+    val ORDER = listOf("FL1", "PL", "CL", "UEL", "UECL", "BL1", "SA", "PD", "DED", "PPL", "ELC")
 
     private val LABELS = mapOf(
         "FL1" to "Ligue 1",
         "PL" to "Premier League",
         "CL" to "Ligue des champions",
+        "UEL" to "Ligue Europa",
+        "UECL" to "Conference League",
         "BL1" to "Bundesliga",
         "SA" to "Serie A",
         "PD" to "LaLiga",
@@ -38,6 +40,8 @@ object Competitions {
         "FL1" to Style(0xFF1D3557, 0xFFDCE8FF), // bleu marine
         "PL" to Style(0xFF3B1F5C, 0xFFEADCFF), // violet
         "CL" to Style(0xFF16306B, 0xFFD6E2FF), // bleu nuit
+        "UEL" to Style(0xFF5A1A30, 0xFFFFD9E4), // bordeaux
+        "UECL" to Style(0xFF2C2F66, 0xFFE0E0FF), // indigo
         "BL1" to Style(0xFF5C1F1F, 0xFFFFDAD4), // rouge brique
         "SA" to Style(0xFF0E4552, 0xFFCFF1F8), // bleu canard
         "PD" to Style(0xFF5A2D0C, 0xFFFFE2CC), // brun orange

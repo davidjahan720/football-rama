@@ -1,6 +1,6 @@
 # Football_Rama — publisher
 
-Job planifié (GitHub Actions, toutes les 3 h) qui récupère sur football-data.org les matchs du jour J et de J+1 de 9 compétitions (Ligue 1, Premier League, Ligue des champions, Bundesliga, Serie A, LaLiga, Eredivisie, Liga Portugal, Championship : toutes incluses dans l'offre gratuite, une seule requête par exécution), puis publie sur GitHub Pages :
+Job planifié (GitHub Actions, toutes les 3 h) qui récupère sur football-data.org les matchs du jour J et de J+1 de 9 compétitions (Ligue 1, Premier League, Ligue des champions, Bundesliga, Serie A, LaLiga, Eredivisie, Liga Portugal, Championship : toutes incluses dans l'offre gratuite, une seule requête par exécution) et, depuis le flux public d'uefa.com (`football_rama_publisher/uefa.py`, facultatif : une panne n'empêche pas la publication), la Ligue Europa et la Conference League, puis publie sur GitHub Pages :
 
 - `fixtures.json` : calendrier + alias d'équipes normalisés + règles de matching ;
 - `fixtures.json.sig` : signature Ed25519 des octets exacts de `fixtures.json` (base64, une ligne, sans retour à la ligne final).

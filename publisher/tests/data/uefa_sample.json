@@ -1,0 +1,572 @@
+[
+ {
+  "id": "2050093",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T16:45:00Z",
+   "utcOffsetInHours": 2
+  },
+  "competition": {
+   "id": "14",
+   "code": "UEL"
+  },
+  "homeTeam": {
+   "id": "50139",
+   "internationalName": "Juventus",
+   "isPlaceHolder": false,
+   "teamCode": "JUV",
+   "translations": {
+    "displayName": {
+     "EN": "Juventus",
+     "FR": "Juventus",
+     "DE": "Juventus",
+     "ES": "Juventus",
+     "PT": "Juventus",
+     "IT": "Juventus",
+     "RU": "Ювентус",
+     "ZH": "尤文图斯",
+     "AR": "يوفنتوس"
+    },
+    "displayOfficialName": {
+     "EN": "Juventus",
+     "FR": "Juventus",
+     "DE": "Juventus",
+     "ES": "Juventus",
+     "PT": "Juventus",
+     "IT": "Juventus",
+     "RU": "Ювентус",
+     "ZH": "尤文图斯",
+     "AR": "يوفنتوس"
+    },
+    "shortName": {
+     "EN": "Juventus",
+     "FR": "Juventus",
+     "DE": "Juventus",
+     "ES": "Juventus",
+     "PT": "Juventus",
+     "IT": "Juventus",
+     "RU": "Ювентус",
+     "ZH": "尤文图斯",
+     "AR": "يوفنتوس"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "55031",
+   "internationalName": "Rennes",
+   "isPlaceHolder": false,
+   "teamCode": "REN",
+   "translations": {
+    "displayName": {
+     "EN": "Rennes",
+     "FR": "Rennes",
+     "DE": "Rennes",
+     "ES": "Rennes",
+     "PT": "Rennes",
+     "IT": "Rennes",
+     "RU": "Ренн",
+     "ZH": "雷恩",
+     "AR": "رين"
+    },
+    "displayOfficialName": {
+     "EN": "Stade Rennais FC",
+     "FR": "Stade Rennais FC",
+     "DE": "Stade Rennais FC",
+     "ES": "Stade Rennais FC",
+     "PT": "Stade Rennais FC",
+     "IT": "Stade Rennais FC",
+     "RU": "Ренн",
+     "ZH": "雷恩",
+     "AR": "ستاد رين"
+    },
+    "shortName": {
+     "EN": "Rennes",
+     "FR": "Rennes",
+     "DE": "Rennes",
+     "ES": "Rennes",
+     "PT": "Rennes",
+     "IT": "Rennes",
+     "RU": "Ренн",
+     "ZH": "Rennes",
+     "AR": "رين"
+    }
+   }
+  }
+ },
+ {
+  "id": "2050095",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T16:45:00Z",
+   "utcOffsetInHours": 2
+  },
+  "competition": {
+   "id": "14",
+   "code": "UEL"
+  },
+  "homeTeam": {
+   "id": "52298",
+   "internationalName": "Ferencváros",
+   "isPlaceHolder": false,
+   "teamCode": "FER",
+   "translations": {
+    "displayName": {
+     "EN": "Ferencváros",
+     "FR": "Ferencváros",
+     "DE": "Ferencváros",
+     "ES": "Ferencváros",
+     "PT": "Ferencváros",
+     "IT": "Ferencváros",
+     "RU": "Ференцварош",
+     "ZH": "费伦克瓦罗斯",
+     "AR": "فيرينتسفاروش"
+    },
+    "displayOfficialName": {
+     "EN": "Ferencvárosi TC",
+     "FR": "Ferencvárosi TC",
+     "DE": "Ferencvárosi TC",
+     "ES": "Ferencvárosi TC",
+     "PT": "Ferencvárosi TC",
+     "IT": "Ferencvárosi TC",
+     "RU": "Ференцварош",
+     "ZH": "费伦克瓦罗斯",
+     "AR": "فيرينتسفاروش"
+    },
+    "shortName": {
+     "EN": "Ferencváros",
+     "FR": "Ferencváros",
+     "DE": "Ferencváros",
+     "ES": "Ferencváros",
+     "PT": "Ferencváros",
+     "IT": "Ferencváros",
+     "RU": "Ференцварош",
+     "ZH": "费伦克瓦罗斯",
+     "AR": "فيرينتسفاروش"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "2603107",
+   "internationalName": "Torreense",
+   "isPlaceHolder": false,
+   "teamCode": "TOR",
+   "translations": {
+    "displayName": {
+     "EN": "Torreense",
+     "FR": "Torreense",
+     "DE": "Torreense",
+     "ES": "Torreense",
+     "PT": "Torreense",
+     "IT": "Torreense",
+     "RU": "Торреенсе",
+     "ZH": "Torreense",
+     "AR": "تورينسي"
+    },
+    "displayOfficialName": {
+     "EN": "SCU Torreense",
+     "FR": "SCU Torreense",
+     "DE": "SCU Torreense",
+     "ES": "SCU Torreense",
+     "PT": "SCU Torreense",
+     "IT": "SCU Torreense",
+     "RU": "Торреенсе",
+     "ZH": "Sport Clube União Torreense",
+     "AR": "تورينسي"
+    },
+    "shortName": {
+     "EN": "Torreense",
+     "FR": "Torreense",
+     "DE": "Torreense",
+     "ES": "Torreense",
+     "PT": "Torreense",
+     "IT": "Torreense",
+     "RU": "Торреенсе",
+     "ZH": "Torreense",
+     "AR": "تورينسي"
+    }
+   }
+  }
+ },
+ {
+  "id": "2050097",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T16:45:00Z",
+   "utcOffsetInHours": 2
+  },
+  "competition": {
+   "id": "14",
+   "code": "UEL"
+  },
+  "homeTeam": {
+   "id": "64125",
+   "internationalName": "Union SG",
+   "isPlaceHolder": false,
+   "teamCode": "USG",
+   "translations": {
+    "displayName": {
+     "EN": "Union SG",
+     "FR": "Union SG",
+     "DE": "Union SG",
+     "ES": "Union SG",
+     "PT": "Union SG",
+     "IT": "Union SG",
+     "RU": "Юнион",
+     "ZH": "St. Gilloise",
+     "AR": "رويال يونيون سانت جيلواز"
+    },
+    "displayOfficialName": {
+     "EN": "R. Union Saint-Gilloise",
+     "FR": "R. Union Saint-Gilloise",
+     "DE": "R. Union Saint-Gilloise",
+     "ES": "R. Union Saint-Gilloise",
+     "PT": "R. Union Saint-Gilloise",
+     "IT": "R. Union Saint-Gilloise",
+     "RU": "Юнион",
+     "ZH": "R. Union Saint-Gilloise",
+     "AR": "رويال يونيون سانت جيلواز"
+    },
+    "shortName": {
+     "EN": "St Gilloise",
+     "FR": "St Gilloise",
+     "DE": "St Gilloise",
+     "ES": "St Gilloise",
+     "PT": "St Gilloise",
+     "IT": "St Gilloise",
+     "RU": "Юнион",
+     "ZH": "St Gilloise",
+     "AR": "سانت جيلواز"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "59340",
+   "internationalName": "H. Beer-Sheva",
+   "isPlaceHolder": false,
+   "teamCode": "HBS",
+   "translations": {
+    "displayName": {
+     "EN": "H. Beer-Sheva",
+     "FR": "H. Beer-Sheva",
+     "DE": "H. Beer-Sheva",
+     "ES": "H. Beer-Sheva",
+     "PT": "H. Beer-Sheva",
+     "IT": "H. Beer-Sheva",
+     "RU": "Хапоэль Беэр-Шева",
+     "ZH": "比尔什瓦哈普尔",
+     "AR": "هبوعيل بئر السبع"
+    },
+    "displayOfficialName": {
+     "EN": "Hapoel Beer-Sheva FC",
+     "FR": "Hapoel Beer-Sheva FC",
+     "DE": "Hapoel Beer-Sheva FC",
+     "ES": "Hapoel Beer-Sheva FC",
+     "PT": "Hapoel Beer-Sheva FC",
+     "IT": "Hapoel Beer-Sheva FC",
+     "RU": "Хапоэль Беэр-Шева",
+     "ZH": "比尔什瓦哈普尔",
+     "AR": "هبوعيل بئر السبع"
+    },
+    "shortName": {
+     "EN": "H. Beer-Sheva",
+     "FR": "H. Beer-Sheva",
+     "DE": "H. Beer-Sheva",
+     "ES": "H. Beer-Sheva",
+     "PT": "H. Beer-Sheva",
+     "IT": "H. Beer-Sheva",
+     "RU": "Хапоэль",
+     "ZH": "Hapoel Beer",
+     "AR": "هبوعيل بئر السبع"
+    }
+   }
+  }
+ },
+ {
+  "id": "2050336",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T14:30:00Z",
+   "utcOffsetInHours": 5
+  },
+  "competition": {
+   "id": "2019",
+   "code": "UECL"
+  },
+  "homeTeam": {
+   "id": "79970",
+   "internationalName": "Kairat Almaty",
+   "isPlaceHolder": false,
+   "teamCode": "KAI",
+   "translations": {
+    "displayName": {
+     "EN": "Kairat Almaty",
+     "FR": "Kairat Almaty",
+     "DE": "Kairat Almaty",
+     "ES": "Kairat Almaty",
+     "PT": "Kairat Almaty",
+     "IT": "Kairat Almaty",
+     "RU": "Кайрат",
+     "ZH": "阿尔马蒂凯拉特",
+     "AR": "كايرات ألماتي"
+    },
+    "displayOfficialName": {
+     "EN": "FC Kairat Almaty",
+     "FR": "FC Kairat Almaty",
+     "DE": "FC Kairat Almaty",
+     "ES": "FC Kairat Almaty",
+     "PT": "FC Kairat Almaty",
+     "IT": "FC Kairat Almaty",
+     "RU": "Кайрат",
+     "ZH": "阿尔马蒂凯拉特",
+     "AR": "كايرات ألماتي"
+    },
+    "shortName": {
+     "EN": "Kairat",
+     "FR": "Kairat",
+     "DE": "Kairat",
+     "ES": "Kairat",
+     "PT": "Kairat",
+     "IT": "Kairat",
+     "RU": "Кайрат",
+     "ZH": "Kairat",
+     "AR": "كايرات"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "50084",
+   "internationalName": "Panathinaikos",
+   "isPlaceHolder": false,
+   "teamCode": "PAN",
+   "translations": {
+    "displayName": {
+     "EN": "Panathinaikos",
+     "FR": "Panathinaikos",
+     "DE": "Panathinaikos",
+     "ES": "Panathinaikos",
+     "PT": "Panathinaikos",
+     "IT": "Panathinaikos",
+     "RU": "Панатинаикос",
+     "ZH": "帕纳辛奈科斯",
+     "AR": "باناثينايكوس"
+    },
+    "displayOfficialName": {
+     "EN": "Panathinaikos FC",
+     "FR": "Panathinaikos FC",
+     "DE": "Panathinaikos FC",
+     "ES": "Panathinaikos FC",
+     "PT": "Panathinaikos FC",
+     "IT": "Panathinaikos FC",
+     "RU": "Панатинаикос",
+     "ZH": "帕纳辛奈科斯",
+     "AR": "باناثينايكوس"
+    },
+    "shortName": {
+     "EN": "Panathinaikos",
+     "FR": "Panathinaikos",
+     "DE": "Panathinaikos",
+     "ES": "Panathinaikos",
+     "PT": "Panathinaikos",
+     "IT": "Panathinaikos",
+     "RU": "Панатинаикос",
+     "ZH": "Panathinaikos",
+     "AR": "باناثينايكوس"
+    }
+   }
+  }
+ },
+ {
+  "id": "2050331",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T16:45:00Z",
+   "utcOffsetInHours": 2
+  },
+  "competition": {
+   "id": "2019",
+   "code": "UECL"
+  },
+  "homeTeam": {
+   "id": "50069",
+   "internationalName": "Crvena Zvezda",
+   "isPlaceHolder": false,
+   "teamCode": "ZVE",
+   "translations": {
+    "displayName": {
+     "EN": "Crvena Zvezda",
+     "FR": "Crvena Zvezda",
+     "DE": "Crvena Zvezda",
+     "ES": "Crvena Zvezda",
+     "PT": "Crvena Zvezda",
+     "IT": "Crvena Zvezda",
+     "RU": "Црвена Звезда",
+     "ZH": "贝尔格莱德红星",
+     "AR": "رد ستار"
+    },
+    "displayOfficialName": {
+     "EN": "FK Crvena Zvezda",
+     "FR": "FK Crvena Zvezda",
+     "DE": "FK Crvena Zvezda",
+     "ES": "FK Crvena Zvezda",
+     "PT": "FK Crvena Zvezda",
+     "IT": "FK Crvena Zvezda",
+     "RU": "Црвена Звезда",
+     "ZH": "贝尔格莱德红星",
+     "AR": "رد ستار"
+    },
+    "shortName": {
+     "EN": "Crvena zvezda",
+     "FR": "Crvena zvezda",
+     "DE": "Crvena zvezda",
+     "ES": "Crvena zvezda",
+     "PT": "Crvena zvezda",
+     "IT": "Crvena zvezda",
+     "RU": "Црвена Звезда",
+     "ZH": "贝尔格莱德红星",
+     "AR": "رد ستار"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "52709",
+   "internationalName": "Copenhagen",
+   "isPlaceHolder": false,
+   "teamCode": "CPH",
+   "translations": {
+    "displayName": {
+     "EN": "Copenhagen",
+     "FR": "Copenhagen",
+     "DE": "Copenhagen",
+     "ES": "Copenhagen",
+     "PT": "Copenhagen",
+     "IT": "Copenhagen",
+     "RU": "Копенгаген",
+     "ZH": "哥本哈根",
+     "AR": "كوبنهاجن"
+    },
+    "displayOfficialName": {
+     "EN": "F.C. Copenhagen",
+     "FR": "F.C. Copenhagen",
+     "DE": "F.C. Copenhagen",
+     "ES": "F.C. Copenhagen",
+     "PT": "F.C. Copenhagen",
+     "IT": "F.C. Copenhagen",
+     "RU": "Копенгаген",
+     "ZH": "哥本哈根",
+     "AR": "كوبنهاجن"
+    },
+    "shortName": {
+     "EN": "Copenhagen",
+     "FR": "Copenhagen",
+     "DE": "Copenhagen",
+     "ES": "Copenhagen",
+     "PT": "Copenhagen",
+     "IT": "Copenhagen",
+     "RU": "Копенгаген",
+     "ZH": "哥本哈根",
+     "AR": "كوبنهاجن"
+    }
+   }
+  }
+ },
+ {
+  "id": "2050332",
+  "status": "UPCOMING",
+  "kickOffTime": {
+   "date": "2026-10-22",
+   "dateTime": "2026-10-22T16:45:00Z",
+   "utcOffsetInHours": 3
+  },
+  "competition": {
+   "id": "2019",
+   "code": "UECL"
+  },
+  "homeTeam": {
+   "id": "2609532",
+   "internationalName": "Pafos",
+   "isPlaceHolder": false,
+   "teamCode": "PAF",
+   "translations": {
+    "displayName": {
+     "EN": "Pafos",
+     "FR": "Pafos",
+     "DE": "Pafos",
+     "ES": "Pafos",
+     "PT": "Pafos",
+     "IT": "Pafos",
+     "RU": "Пафос",
+     "ZH": "PAFOS",
+     "AR": "بافوس"
+    },
+    "displayOfficialName": {
+     "EN": "Pafos FC",
+     "FR": "Pafos FC",
+     "DE": "Pafos FC",
+     "ES": "Pafos FC",
+     "PT": "Pafos FC",
+     "IT": "Pafos FC",
+     "RU": "Пафос",
+     "ZH": "PAFOS F.C.",
+     "AR": "بافوس"
+    },
+    "shortName": {
+     "EN": "PAFOS",
+     "FR": "PAFOS",
+     "DE": "PAFOS",
+     "ES": "PAFOS",
+     "PT": "PAFOS",
+     "IT": "PAFOS",
+     "RU": "PAFOS",
+     "ZH": "PAFOS",
+     "AR": "بافوس"
+    }
+   }
+  },
+  "awayTeam": {
+   "id": "2607924",
+   "internationalName": "Riga",
+   "isPlaceHolder": false,
+   "teamCode": "RIG",
+   "translations": {
+    "displayName": {
+     "EN": "Riga",
+     "FR": "Riga",
+     "DE": "Riga",
+     "ES": "Riga",
+     "PT": "Riga",
+     "IT": "Riga",
+     "RU": "Рига",
+     "ZH": "里加",
+     "AR": "ريجا"
+    },
+    "displayOfficialName": {
+     "EN": "Riga FC",
+     "FR": "Riga FC",
+     "DE": "Riga FC",
+     "ES": "Riga FC",
+     "PT": "Riga FC",
+     "IT": "Riga FC",
+     "RU": "Рига",
+     "ZH": "里加",
+     "AR": "ريجا"
+    },
+    "shortName": {
+     "EN": "Riga",
+     "FR": "Riga",
+     "DE": "Riga",
+     "ES": "Riga",
+     "PT": "Riga",
+     "IT": "Riga",
+     "RU": "Рига",
+     "ZH": "Caramba/Dinamo R",
+     "AR": "ريجا"
+    }
+   }
+  }
+ }
+]

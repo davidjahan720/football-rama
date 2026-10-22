@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
 from . import SCHEMA_VERSION
-from .aliases import COMPETITION_KEYWORDS, COMPETITIONS, EXCLUDED_TITLE_WORDS, team_aliases, team_tokens
+from .aliases import ALL_COMPETITIONS, COMPETITION_KEYWORDS, EXCLUDED_TITLE_WORDS, team_aliases, team_tokens
 
 log = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ def select_matches(raw_matches: list, window: Window) -> list[dict]:
         kickoff = _parse_utc(m.get("utcDate"))
         home, away = m.get("homeTeam") or {}, m.get("awayTeam") or {}
         match_id = m.get("id")
-        if (comp not in COMPETITIONS or m.get("status") not in KEPT_STATUSES or kickoff is None
+        if (comp not in ALL_COMPETITIONS or m.get("status") not in KEPT_STATUSES or kickoff is None
                 or not window.contains(kickoff) or not isinstance(match_id, int) or isinstance(match_id, bool)):
             skipped += 1
             continue
@@ -92,7 +92,7 @@ def build_document(raw_matches: list, now: datetime) -> dict:
         "generated_at": iso_z(now),
         "valid_until": iso_z(now + VALIDITY),
         "window": {"from": iso_z(window.start), "to": iso_z(window.end)},
-        "competitions": dict(COMPETITIONS),
+        "competitions": dict(ALL_COMPETITIONS),
         "matching": {
             "competition_keywords": {k: list(v) for k, v in COMPETITION_KEYWORDS.items()},
             "excluded_title_words": list(EXCLUDED_TITLE_WORDS),

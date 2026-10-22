@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from football_rama_publisher import aliases as aliases_mod
-from football_rama_publisher.aliases import (COMPETITION_KEYWORDS, COMPETITIONS, EXCLUDED_TITLE_WORDS, GENERIC_WORDS,
+from football_rama_publisher.aliases import (ALL_COMPETITIONS, COMPETITION_KEYWORDS, COMPETITIONS, EXCLUDED_TITLE_WORDS, GENERIC_WORDS,
                                              AliasFileError, extra_aliases, team_aliases, team_tokens)
 from football_rama_publisher.build import build_document, select_matches, serialize, Window
 from football_rama_publisher.normalize import norm
@@ -54,7 +54,7 @@ def test_single_api_call_with_all_codes(tmp_path, private_key):
 
 
 def test_every_competition_has_normalised_keywords():
-    assert set(COMPETITION_KEYWORDS) == set(COMPETITIONS)
+    assert set(COMPETITION_KEYWORDS) == set(ALL_COMPETITIONS)
     for code, words in COMPETITION_KEYWORDS.items():
         assert words, code
         assert all(norm(w) == w and w for w in words), code
@@ -197,9 +197,9 @@ def raw_match(match_id: int, code: str, kickoff: datetime, home: tuple[str, str]
 def test_new_codes_kept_and_unknown_codes_ignored():
     k = datetime(2026, 10, 20, 18, 30, tzinfo=UTC)
     raw = [raw_match(i, code, k, ("Home FC", "Home"), ("Away FC", "Away"))
-           for i, code in enumerate(sorted(COMPETITIONS) + ["EL", "BSA", "XYZ", ""], start=1)]
+           for i, code in enumerate(sorted(ALL_COMPETITIONS) + ["ECL", "BSA", "XYZ", ""], start=1)]
     kept = select_matches(raw, Window.for_now(NOW))
-    assert {m["competition"] for m in kept} == set(COMPETITIONS)
+    assert {m["competition"] for m in kept} == set(ALL_COMPETITIONS)
 
 
 # ------------------------------------------------------------------ size of fixtures.json
