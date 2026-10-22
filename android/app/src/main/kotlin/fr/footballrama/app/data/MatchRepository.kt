@@ -1,6 +1,8 @@
 package fr.footballrama.app.data
 
+import fr.footballrama.core.epg.ChannelEpgFallback
 import fr.footballrama.core.epg.EpgParseException
+import fr.footballrama.core.epg.SportChannels
 import fr.footballrama.core.fixtures.DataAttribution
 import fr.footballrama.core.fixtures.Fixtures
 import fr.footballrama.core.fixtures.FixturesClient
@@ -11,6 +13,9 @@ import fr.footballrama.core.io.LimitedInputStream
 import fr.footballrama.core.matching.MatchPipeline
 import fr.footballrama.core.matching.MatchReport
 import fr.footballrama.core.matching.MatchReportCodec
+import fr.footballrama.core.xtream.LiveCategory
+import fr.footballrama.core.xtream.LiveStream
+import fr.footballrama.core.xtream.XtreamAccount
 import fr.footballrama.core.xtream.XtreamClient
 import fr.footballrama.core.xtream.XtreamException
 import kotlinx.coroutines.CancellationException
@@ -32,6 +37,7 @@ import java.io.File
 import java.io.IOException
 import java.time.Clock
 import java.time.Instant
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -52,6 +58,8 @@ class MatchRepository(
     private val clock: Clock = Clock.systemUTC(),
     /** Delais entre tentatives quand la signature est invalide (incoherence CDN passagere). */
     private val signatureRetryDelaysMs: List<Long> = listOf(20_000, 60_000),
+    /** Repli "guide chaine par chaine" quand xmltv.php est vide ou illisible. */
+    private val channelFallback: ChannelEpgFallback = ChannelEpgFallback(dispatcher = io),
 ) {
     private val _state = MutableStateFlow<RefreshState>(RefreshState.Idle)
     val state: StateFlow<RefreshState> = _state.asStateFlow()
@@ -65,6 +73,9 @@ class MatchRepository(
     @Volatile
     private var activeRefresh: Job? = null
     private val fixturesDir = File(filesDir, "fixtures")
+
+    /** Present si le dernier xmltv.php etait vide/absent/illisible (preference locale non sensible). */
+    private val noXmltvMarker = File(filesDir, "xmltv_unavailable")
     private val reportFile = File(filesDir, "matches.json")
 
     init {
@@ -120,6 +131,7 @@ class MatchRepository(
             activeRefresh = null
             credentialStore.clear()
             reportFile.delete()
+            noXmltvMarker.delete()
             cleanupTempFiles()
             _state.value = RefreshState.Idle
         }
@@ -143,52 +155,147 @@ class MatchRepository(
 
         val epgFile = File(cacheDir, "$TEMP_PREFIX${System.nanoTime()}.xml")
         try {
-            progress(RefreshState.Step.EPG_DOWNLOAD, 0.15f)
-            var lastEmit = -1
-            xtream {
-                xtreamClient.downloadEpg(account, epgFile) { read, total ->
-                    job?.ensureActive()
-                    if (total > 0) {
-                        val pct = (read * 100 / total).toInt().coerceIn(0, 100)
-                        if (pct != lastEmit) {
-                            lastEmit = pct
-                            _state.value = RefreshState.Loading(RefreshState.Step.EPG_DOWNLOAD, 0.15f + 0.55f * pct / 100f)
-                        }
-                    } else if (lastEmit != -2) {
-                        lastEmit = -2
-                        _state.value = RefreshState.Loading(RefreshState.Step.EPG_DOWNLOAD, null)
-                    }
-                }
-            }
-
-            // Guide vide (quelques octets) : cas reel d'un fournisseur en maintenance, a distinguer d'un guide illisible.
-            if (epgFile.length() < MIN_EPG_BYTES) throw RefreshFailure(RefreshError.EPG_EMPTY)
-            progress(RefreshState.Step.EPG_PARSE, 0.7f)
-            val size = epgFile.length().coerceAtLeast(1)
-            var lastParse = -1
-            val report = try {
-                LimitedInputStream(epgFile.inputStream().buffered(1 shl 16), Long.MAX_VALUE) { read ->
-                    job?.ensureActive()
-                    val pct = (read * 100 / size).toInt()
-                    if (pct != lastParse) {
-                        lastParse = pct
-                        _state.value = RefreshState.Loading(RefreshState.Step.EPG_PARSE, 0.7f + 0.25f * pct / 100f)
-                    }
-                }.use { input -> pipeline.run(fixtures, input, streams, categories, clock.instant()) }
-            } catch (e: EpgParseException) {
-                currentCoroutineContext().ensureActive()
-                throw RefreshFailure(if (e.reason == EpgParseException.Reason.TOO_LARGE) RefreshError.TOO_LARGE else RefreshError.EPG_INVALID)
-            } catch (e: IOException) {
-                currentCoroutineContext().ensureActive()
-                throw RefreshFailure(RefreshError.STORAGE)
-            }
-
+            val report = readXmltv(account, epgFile, fixtures, streams, categories, job)
+                ?: runChannelFallback(account, fixtures, streams, categories)
             progress(RefreshState.Step.MATCHING, 0.97f)
             writeReport(report)
             return RefreshState.Success(report, Instant.ofEpochMilli(report.updatedAtMillis), fromCache = false, warning = warning)
         } finally {
             epgFile.delete()
         }
+    }
+
+    /**
+     * Fichier complet xmltv.php. @return null si le guide est vide, absent (404) ou illisible : le repli chaine
+     * par chaine prend alors le relais. Si le fournisseur est connu pour ne pas fournir de fichier (marqueur
+     * [noXmltvMarker]), xmltv.php est quand meme tente d'abord, mais avec un delai court.
+     */
+    private suspend fun readXmltv(
+        account: XtreamAccount,
+        epgFile: File,
+        fixtures: Fixtures,
+        streams: List<LiveStream>,
+        categories: List<LiveCategory>,
+        job: Job?,
+    ): MatchReport? {
+        val knownMissing = noXmltvMarker.isFile
+        progress(RefreshState.Step.EPG_DOWNLOAD, 0.15f)
+        var lastEmit = -1
+        var received = 0L
+        try {
+            xtreamClient.downloadEpg(
+                account,
+                epgFile,
+                callTimeoutSeconds = if (knownMissing) SHORT_XMLTV_TIMEOUT_S else XtreamClient.EPG_CALL_TIMEOUT_S,
+            ) { read, total ->
+                job?.ensureActive()
+                received = read
+                if (total > 0) {
+                    val pct = (read * 100 / total).toInt().coerceIn(0, 100)
+                    if (pct != lastEmit) {
+                        lastEmit = pct
+                        _state.value = RefreshState.Loading(RefreshState.Step.EPG_DOWNLOAD, 0.15f + 0.55f * pct / 100f)
+                    }
+                } else if (lastEmit != -2) {
+                    lastEmit = -2
+                    _state.value = RefreshState.Loading(RefreshState.Step.EPG_DOWNLOAD, null)
+                }
+            }
+        } catch (e: XtreamException) {
+            currentCoroutineContext().ensureActive()
+            when {
+                // Pas de fichier XMLTV sur ce panel : repli.
+                e.kind == XtreamException.Kind.HTTP && e.httpCode == 404 -> return markNoXmltv()
+                // Delai court depasse : si des donnees arrivaient, le fichier est peut-etre revenu -> delai normal
+                // la prochaine fois. Dans tous les cas, repli pour ce rafraichissement.
+                knownMissing && e.kind == XtreamException.Kind.TIMEOUT -> {
+                    if (received >= MIN_EPG_BYTES) noXmltvMarker.delete()
+                    return null
+                }
+                else -> throw RefreshFailure(toRefreshError(e))
+            }
+        }
+
+        // Guide vide (quelques octets) : cas reel d'un fournisseur qui ne publie plus xmltv.php.
+        if (epgFile.length() < MIN_EPG_BYTES) return markNoXmltv()
+        progress(RefreshState.Step.EPG_PARSE, 0.7f)
+        val size = epgFile.length().coerceAtLeast(1)
+        var lastParse = -1
+        val report = try {
+            LimitedInputStream(epgFile.inputStream().buffered(1 shl 16), Long.MAX_VALUE) { read ->
+                job?.ensureActive()
+                val pct = (read * 100 / size).toInt()
+                if (pct != lastParse) {
+                    lastParse = pct
+                    _state.value = RefreshState.Loading(RefreshState.Step.EPG_PARSE, 0.7f + 0.25f * pct / 100f)
+                }
+            }.use { input -> pipeline.run(fixtures, input, streams, categories, clock.instant()) }
+        } catch (e: EpgParseException) {
+            currentCoroutineContext().ensureActive()
+            when (e.reason) {
+                EpgParseException.Reason.MALFORMED -> return markNoXmltv() // HTML, JSON, tronque... : repli
+                EpgParseException.Reason.TOO_LARGE -> throw RefreshFailure(RefreshError.TOO_LARGE)
+                else -> throw RefreshFailure(RefreshError.EPG_INVALID)
+            }
+        } catch (e: IOException) {
+            currentCoroutineContext().ensureActive()
+            throw RefreshFailure(RefreshError.STORAGE)
+        }
+        noXmltvMarker.delete() // le fichier complet fonctionne (de nouveau)
+        return report
+    }
+
+    /** Memorise (fichier local non sensible) que ce fournisseur ne fournit pas de xmltv.php exploitable. */
+    private fun markNoXmltv(): MatchReport? {
+        runCatching { noXmltvMarker.writeText("1") }
+        return null
+    }
+
+    /**
+     * Repli : guide chaine par chaine (get_short_epg) sur les chaines sport, requetes espacees et limitees
+     * (voir [ChannelEpgFallback]). Aucun programme recupere -> EPG_EMPTY (ou l'erreur qui a tout bloque).
+     */
+    private suspend fun runChannelFallback(
+        account: XtreamAccount,
+        fixtures: Fixtures,
+        streams: List<LiveStream>,
+        categories: List<LiveCategory>,
+    ): MatchReport {
+        progress(RefreshState.Step.EPG_CHANNELS, 0.15f)
+        val selected = SportChannels.select(streams, categories)
+        if (selected.isEmpty()) throw RefreshFailure(RefreshError.EPG_EMPTY)
+        val lastPct = AtomicInteger(-1)
+        val result = channelFallback.fetch(
+            selected,
+            pipeline.filterFor(fixtures),
+            fetchOne = { s -> xtreamClient.getShortEpg(account, s.streamId, channelFallback.limit) },
+        ) { done, total ->
+            val pct = done * 100 / total.coerceAtLeast(1)
+            if (lastPct.getAndSet(pct) != pct) {
+                _state.value = RefreshState.Loading(RefreshState.Step.EPG_CHANNELS, 0.15f + 0.8f * pct / 100f)
+            }
+        }
+        if (result.listingsTotal == 0) {
+            throw RefreshFailure(
+                if (result.channelsSucceeded > 0) {
+                    RefreshError.EPG_EMPTY
+                } else {
+                    when (result.stopReason) {
+                        ChannelEpgFallback.StopReason.AUTH -> RefreshError.AUTH
+                        ChannelEpgFallback.StopReason.THROTTLED -> RefreshError.SERVER
+                        ChannelEpgFallback.StopReason.NETWORK ->
+                            if (result.lastError == XtreamException.Kind.TIMEOUT) RefreshError.TIMEOUT else RefreshError.NETWORK
+                        else -> RefreshError.EPG_EMPTY
+                    }
+                },
+            )
+        }
+        return pipeline.runOnProgrammes(
+            fixtures, result.data, streams, categories, clock.instant(),
+            elapsedMillis = result.elapsedMillis,
+            channelsQueried = result.channelsQueried,
+            channelsFailed = result.channelsFailed,
+        )
     }
 
     private fun progress(step: RefreshState.Step, value: Float) {
@@ -199,21 +306,22 @@ class MatchRepository(
         block()
     } catch (e: XtreamException) {
         currentCoroutineContext().ensureActive() // annulation : on propage la CancellationException
-        throw RefreshFailure(
-            when (e.kind) {
-                XtreamException.Kind.NETWORK -> RefreshError.NETWORK
-                XtreamException.Kind.TIMEOUT -> RefreshError.TIMEOUT
-                XtreamException.Kind.TLS -> RefreshError.TLS
-                XtreamException.Kind.AUTH -> RefreshError.AUTH
-                XtreamException.Kind.HTTP -> if (e.httpCode == 404) RefreshError.INVALID_RESPONSE else RefreshError.SERVER
-                XtreamException.Kind.SERVER -> RefreshError.SERVER
-                XtreamException.Kind.TOO_LARGE -> RefreshError.TOO_LARGE
-                XtreamException.Kind.INVALID_RESPONSE -> RefreshError.INVALID_RESPONSE
-                XtreamException.Kind.STORAGE -> RefreshError.STORAGE
-                XtreamException.Kind.CANCELLED -> RefreshError.NETWORK
-            },
-        )
+        throw RefreshFailure(toRefreshError(e))
     }
+
+    private fun toRefreshError(e: XtreamException): RefreshError =
+        when (e.kind) {
+            XtreamException.Kind.NETWORK -> RefreshError.NETWORK
+            XtreamException.Kind.TIMEOUT -> RefreshError.TIMEOUT
+            XtreamException.Kind.TLS -> RefreshError.TLS
+            XtreamException.Kind.AUTH -> RefreshError.AUTH
+            XtreamException.Kind.HTTP -> if (e.httpCode == 404) RefreshError.INVALID_RESPONSE else RefreshError.SERVER
+            XtreamException.Kind.SERVER -> RefreshError.SERVER
+            XtreamException.Kind.TOO_LARGE -> RefreshError.TOO_LARGE
+            XtreamException.Kind.INVALID_RESPONSE -> RefreshError.INVALID_RESPONSE
+            XtreamException.Kind.STORAGE -> RefreshError.STORAGE
+            XtreamException.Kind.CANCELLED -> RefreshError.NETWORK
+        }
 
     // ------------------------------------------------------------------ calendrier
 
@@ -294,5 +402,8 @@ class MatchRepository(
         const val TEMP_PREFIX = "epg-"
         /** En dessous, le fichier ne peut contenir aucun programme (un XMLTV minimal fait deja plus). */
         const val MIN_EPG_BYTES = 64L
+
+        /** Delai de xmltv.php quand le fournisseur est connu pour renvoyer un fichier vide (reponse rapide). */
+        const val SHORT_XMLTV_TIMEOUT_S = 45L
     }
 }

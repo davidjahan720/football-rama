@@ -1,5 +1,6 @@
 package fr.footballrama.core.matching
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -13,7 +14,18 @@ data class MatchReport(
     val fixturesGeneratedAtMillis: Long,
     val matches: List<MatchResult>,
     val stats: ReportStats,
+    /** Origine du guide TV (absent dans les rapports anterieurs : fichier XMLTV). */
+    val epgSource: EpgSource = EpgSource.XMLTV,
 )
+
+@Serializable
+enum class EpgSource {
+    /** Fichier complet xmltv.php. */
+    @SerialName("xmltv") XMLTV,
+
+    /** Repli chaine par chaine (get_short_epg), quand xmltv.php est vide ou illisible. */
+    @SerialName("channels") CHANNELS,
+}
 
 @Serializable
 data class ReportStats(
@@ -21,8 +33,11 @@ data class ReportStats(
     val programmesInWindow: Int,
     val programmesKept: Int,
     val matchesWithChannels: Int,
-    /** Duree du parsing EPG (ms). */
+    /** Duree du parsing EPG (ms), ou de la recuperation chaine par chaine. */
     val parseMillis: Long,
+    /** Repli chaine par chaine : chaines interrogees / en echec (0 avec le fichier XMLTV). */
+    val epgChannelsQueried: Int = 0,
+    val epgChannelsFailed: Int = 0,
 )
 
 object MatchReportCodec {
