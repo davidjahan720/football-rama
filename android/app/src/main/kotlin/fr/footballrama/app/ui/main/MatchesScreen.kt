@@ -78,6 +78,7 @@ fun MatchesScreen(
     onRetry: () -> Unit,
     onOpenMatch: (Long) -> Unit,
     onOpenSettings: () -> Unit,
+    updateBanner: @Composable () -> Unit = {},
 ) {
     // Cible de focus a l'entree : element restaure, sinon premiere carte, sinon bouton Reglages.
     val firstCard = (sections.today + sections.tomorrow).firstOrNull()?.let { matchFocusKey(it.fixtureId) }
@@ -130,6 +131,7 @@ fun MatchesScreen(
         }
 
         StatusArea(state = state, report = report, now = now, onRetry = onRetry)
+        updateBanner()
 
         Box(modifier = Modifier.weight(1f).fillMaxWidth().padding(top = 8.dp)) {
             when {

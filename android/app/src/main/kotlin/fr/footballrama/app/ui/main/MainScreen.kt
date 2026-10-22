@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.footballrama.app.FootballRamaApp
 import fr.footballrama.app.ui.logic.availableCountries
 import fr.footballrama.app.ui.logic.effectiveFilter
 import fr.footballrama.app.ui.logic.splitByDay
@@ -36,6 +38,9 @@ fun MainScreen(vm: MainViewModel) {
     val now by vm.now.collectAsStateWithLifecycle()
     val storedFilter by vm.countryFilter.collectAsStateWithLifecycle()
     val labeler = rememberCountryLabeler()
+    // Bandeau "mise a jour disponible" : l'installation se fait depuis les Reglages
+    val updateState by (LocalContext.current.applicationContext as FootballRamaApp).container
+        .updateManager.state.collectAsStateWithLifecycle()
 
     val zone = ZoneId.systemDefault()
     // Recalcul chaque minute : passage a minuit et matchs termines masques (2 h 30 apres le coup d'envoi).
@@ -72,6 +77,7 @@ fun MainScreen(vm: MainViewModel) {
                 restoreFocus = FOCUS_SETTINGS
                 screen = Screen.SETTINGS
             },
+            updateBanner = { UpdateBanner(updateState) },
         )
         Screen.DETAIL -> DetailScreen(
             match = report?.matches?.firstOrNull { it.fixtureId == selectedId },
