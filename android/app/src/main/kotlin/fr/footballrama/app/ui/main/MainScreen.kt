@@ -38,8 +38,9 @@ fun MainScreen(vm: MainViewModel) {
     val labeler = rememberCountryLabeler()
 
     val zone = ZoneId.systemDefault()
-    val today = now.atZone(zone).toLocalDate() // (LocalDate.ofInstant = API 34)
-    val sections = remember(report, today, zone) { splitByDay(report?.matches.orEmpty(), now, zone) }
+    // Recalcul chaque minute : passage a minuit et matchs termines masques (2 h 30 apres le coup d'envoi).
+    val minute = now.epochSecond / 60
+    val sections = remember(report, minute, zone) { splitByDay(report?.matches.orEmpty(), now, zone) }
     val countries = remember(sections, labeler) { availableCountries(sections.today + sections.tomorrow, labeler) }
     val filter = effectiveFilter(storedFilter, countries)
 

@@ -13,6 +13,7 @@ composeBom = "2026.09.00"
 tvMaterial = "1.1.0"
 activityCompose = "1.13.0"
 lifecycle = "2.11.0"
+zxing = "3.5.4"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -34,6 +35,7 @@ androidx-tv-material = { module = "androidx.tv:tv-material", version.ref = "tvMa
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

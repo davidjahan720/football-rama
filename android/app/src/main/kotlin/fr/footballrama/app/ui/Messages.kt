@@ -69,35 +69,4 @@ object Messages {
         RefreshState.Step.EPG_PARSE -> R.string.step_epg_parse
         RefreshState.Step.MATCHING -> R.string.step_matching
     }
-
-    /** Libelle francais des codes pays courants des listes IPTV ; null = afficher la valeur brute. */
-    @StringRes
-    fun countryLabel(key: String): Int? = when (key) {
-        "FR" -> R.string.country_fr
-        "UK" -> R.string.country_uk
-        "BE" -> R.string.country_be
-        "CH" -> R.string.country_ch
-        "LU" -> R.string.country_lu
-        "CA" -> R.string.country_ca
-        "DE" -> R.string.country_de
-        "ES" -> R.string.country_es
-        "IT" -> R.string.country_it
-        "PT" -> R.string.country_pt
-        "NL" -> R.string.country_nl
-        "IE" -> R.string.country_ie
-        "US" -> R.string.country_us
-        "AT" -> R.string.country_at
-        "PL" -> R.string.country_pl
-        "TR" -> R.string.country_tr
-        "MA" -> R.string.country_ma
-        "DZ" -> R.string.country_dz
-        "TN" -> R.string.country_tn
-        "AR" -> R.string.country_arabic
-        "AF" -> R.string.country_africa
-        "SE" -> R.string.country_se
-        "NO" -> R.string.country_no
-        "DK" -> R.string.country_dk
-        "" -> R.string.country_other
-        else -> null
-    }
 }

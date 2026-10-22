@@ -29,6 +29,8 @@ Ces données ne sont ni sauvegardées dans le cloud ni transférées vers un aut
 
 Le calendrier provient de football-data.org ; l’application ne transmet rien à ce service.
 
+**Connexion depuis le téléphone (facultative).** Si vous choisissez « Se connecter avec mon téléphone », le boîtier ouvre pendant 5 minutes au plus une page web sur votre réseau local. Le formulaire que vous remplissez sur votre téléphone est envoyé directement au boîtier, sans passer par Internet ni par un serveur Football Rama. Cette liaison locale n’est pas chiffrée (HTTP) : utilisez cette option uniquement sur votre réseau domestique. La page s’arrête dès la connexion réussie, à la sortie de l’écran ou après 5 codes de vérification erronés ; rien n’y est conservé.
+
 ## Vos droits
 
 L’éditeur ne détenant aucune donnée vous concernant, vous exercez directement la maîtrise de vos données :
@@ -40,7 +42,7 @@ Pour toute question, écrivez à l’adresse de contact ci-dessus. Vous pouvez a
 
 ## Sécurité
 
-Identifiants chiffrés par une clé matérielle de l’appareil quand celui-ci le permet ; aucune journalisation des identifiants ; calendrier vérifié par signature numérique avant usage ; connexion HTTPS obligatoire pour le calendrier ; captures d’écran bloquées sur l’écran de connexion.
+Identifiants chiffrés par une clé matérielle de l’appareil quand celui-ci le permet ; aucune journalisation des identifiants ; calendrier vérifié par signature numérique avant usage ; connexion HTTPS obligatoire pour le calendrier ; captures d’écran bloquées sur l’écran de connexion ; connexion depuis le téléphone protégée par un lien à usage unique et un code de vérification affiché uniquement sur la TV.
 
 ## Modifications
 
