@@ -32,3 +32,4 @@ keystore.properties
 signing.properties
 .claude/settings.local.json
 *.log
+.claude/worktrees/
