@@ -31,3 +31,14 @@ Interface entre les deux briques : `docs/CONTRAT_FIXTURES.md`.
 - [ ] Créer le dépôt GitHub et le secret `FIXTURES_SIGNING_KEY` et `FOOTBALL_DATA_TOKEN`
 - [ ] Choisir l'hébergement du JSON (GitHub Pages ou Cloudflare Pages)
 - [ ] Installer l'APK sur le Z11 Pro
+
+## Phase 2 (2026-10-22) — version officielle + connexion par téléphone
+### Lot F — AGENT BACKEND/AUTOMATISATION : version officielle et mises à jour
+- [ ] Signature release (keystore hors dépôt, script de création lancé par David)
+- [ ] `update.json` signé Ed25519 publié par le workflow (contrat mis à jour)
+- [ ] Vérification de mise à jour dans l'app + téléchargement, contrôle SHA-256, installation (PackageInstaller)
+- [ ] Script de publication GitHub Release (lancé après accord de David)
+### Lot G — AGENT FRONTEND/SÉCURITÉ : connexion par téléphone (QR) + finitions
+- [ ] Serveur HTTP local éphémère sur le boîtier, jeton à usage unique, QR code
+- [ ] Libellés pays, noms courts des équipes, masquage des matchs terminés
+### Lot H — DOCUMENTATION : guide d'installation adhérent (Downloader, codes, QR)
