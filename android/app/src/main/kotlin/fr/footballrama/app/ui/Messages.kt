@@ -6,6 +6,7 @@ import fr.footballrama.app.data.RefreshError
 import fr.footballrama.app.data.RefreshState
 import fr.footballrama.app.settings.UserAgentRules
 import fr.footballrama.app.ui.logic.ServerUrlParser
+import fr.footballrama.core.matching.EpgSource
 import fr.footballrama.core.xtream.XtreamException
 
 /** Correspondance erreurs -> messages francais (strings.xml). Aucun message technique ni identifiant affiche. */
@@ -68,6 +69,13 @@ object Messages {
         RefreshState.Step.CHANNELS -> R.string.step_channels
         RefreshState.Step.EPG_DOWNLOAD -> R.string.step_epg_download
         RefreshState.Step.EPG_PARSE -> R.string.step_epg_parse
+        RefreshState.Step.EPG_CHANNELS -> R.string.step_epg_channels
         RefreshState.Step.MATCHING -> R.string.step_matching
+    }
+
+    @StringRes
+    fun epgSource(source: EpgSource): Int = when (source) {
+        EpgSource.XMLTV -> R.string.epg_source_xmltv
+        EpgSource.CHANNELS -> R.string.epg_source_channels
     }
 }

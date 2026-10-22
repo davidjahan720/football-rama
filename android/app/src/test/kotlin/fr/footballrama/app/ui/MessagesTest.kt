@@ -5,6 +5,7 @@ import fr.footballrama.app.data.RefreshError
 import fr.footballrama.app.data.RefreshState
 import fr.footballrama.app.settings.UserAgentRules
 import fr.footballrama.app.ui.logic.ServerUrlParser
+import fr.footballrama.core.matching.EpgSource
 import fr.footballrama.core.xtream.XtreamException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -45,5 +46,8 @@ class MessagesTest {
         UserAgentRules.Reason.entries.forEach { assertNotEquals(0, Messages.userAgentError(it)) }
         val steps = RefreshState.Step.entries.map { Messages.step(it) }
         assertEquals(steps.size, steps.toSet().size)
+        assertEquals(R.string.step_epg_channels, Messages.step(RefreshState.Step.EPG_CHANNELS))
+        val sources = EpgSource.entries.map { Messages.epgSource(it) }
+        assertEquals(sources.size, sources.toSet().size)
     }
 }

@@ -86,6 +86,13 @@ fun SettingsScreen(
                 style = FrText.Body,
                 color = FrColors.Text,
             )
+            report?.let {
+                Text(
+                    stringResource(R.string.settings_epg_source, stringResource(Messages.epgSource(it.epgSource))),
+                    style = FrText.Small,
+                    color = FrColors.TextMuted,
+                )
+            }
             when (state) {
                 is RefreshState.Loading -> Text(
                     stringResource(R.string.loading_step, stringResource(Messages.step(state.step))),

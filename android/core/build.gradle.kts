@@ -20,6 +20,8 @@ kotlin {
 dependencies {
     api(libs.okhttp)
     api(libs.kotlinx.serialization.json)
+    // Repli EPG chaine par chaine (concurrence bornee, pauses, annulation). Deja embarque par :app.
+    api(libs.kotlinx.coroutines.core)
     // Pur Java, fonctionne sur JVM et Android ; Ed25519 en temps constant (cf. FixturesVerifier).
     implementation(libs.tink.android)
     // API XmlPull : fournie par le framework sur Android (ne pas l'embarquer dans l'APK).
@@ -36,7 +38,11 @@ tasks.test {
     useJUnitPlatform()
     maxHeapSize = "1g"
     // Le test d'integration lit ../../cache (donnees reelles locales, jamais committees).
-    systemProperty("footballrama.cacheDir", rootProject.projectDir.resolve("../cache").absolutePath)
+    // Surchargeable (-Pfootballrama.cacheDir=...) pour un worktree git sans cache/.
+    systemProperty(
+        "footballrama.cacheDir",
+        providers.gradleProperty("footballrama.cacheDir").orNull ?: rootProject.projectDir.resolve("../cache").absolutePath,
+    )
     testLogging {
         events("passed", "skipped", "failed")
         showStandardStreams = true

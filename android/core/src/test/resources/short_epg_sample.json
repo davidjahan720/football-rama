@@ -1,0 +1,52 @@
+{
+ "epg_listings": [
+  {
+   "id": "396851",
+   "epg_id": "203",
+   "title": "QmF5ZXJuIE11bmljaCAvIEFyc2VuYWw=",
+   "lang": "",
+   "start": "2026-10-22 13:15:00",
+   "end": "2026-10-22 15:00:00",
+   "description": "Q2V0dGUgYWZmaWNoZSBlbnRyZSBsZSBCYXllcm4gZXQgbGVzIEd1bm5lcnMgb3Bwb3NlIGRldXggZGVzIGdyYW5kcyBmYXZvcmlzIGRlIGxhIGNvbXDDqXRpdGlvbi4gQSBsJ0FsbGlhbnogQXJlbmEsIE1pY2hhZWwgT2xpc2UgZXQgbGVzIHNpZW5zIGNoZXJjaGVyb250IMOgIG1hcnF1ZXIgbGV1ciB0ZXJyaXRvaXJlLg==",
+   "channel_id": "CanalPlusFoot.fr",
+   "start_timestamp": "1792667700",
+   "stop_timestamp": "1792674000"
+  },
+  {
+   "id": "396852",
+   "epg_id": "203",
+   "title": "TGlsbGUgLyBHYWxhdGFzYXJheQ==",
+   "lang": "",
+   "start": "2026-10-22 15:00:00",
+   "end": "2026-10-22 16:43:00",
+   "description": "QXByw6hzIHVuZSBkw6lmYWl0ZSBmcnVzdHJhbnRlIGNvbnRyZSBsZSBCZXRpcyBTw6l2aWxsZSAoMi0zKSBldCB1biByZXZlcnMgbG9naXF1ZSDDoCBBcnNlbmFsICgzLTApLCBsZXMgRG9ndWVzIHJldHJvdXZlbnQgbGV1ciBwdWJsaWMgYXZlYyBsYSBmZXJtZSBpbnRlbnRpb24gZGUgcydpbXBvc2VyIMOgIGRvbWljaWxlLg==",
+   "channel_id": "CanalPlusFoot.fr",
+   "start_timestamp": "1792674000",
+   "stop_timestamp": "1792680180"
+  },
+  {
+   "id": "396853",
+   "epg_id": "203",
+   "title": "RMOpdGVjdGl2ZSBNYXRob3V4",
+   "lang": "",
+   "start": "2026-10-22 16:43:00",
+   "end": "2026-10-22 17:23:00",
+   "description": "RGl4IGFucyBhcHLDqHMgYXZvaXIgaW5zdWx0w6kgTGF1cmVudCBCbGFuYywgc29uIGVudHJhw65uZXVyIGF1IFBTRywgZW4gZGlyZWN0IHN1ciBQZXJpc2NvcGUsIGwnYW5jaWVuIGxhdMOpcmFsIGRlIFRvdHRlbmhhbSBldCBkZSBsYSBDw7R0ZSBkJ0l2b2lyZSBzJ2VzdCBwcsOpc2VudMOpIGRhbnMgbGVzIGxvY2F1eCBkdSAiRMOpdGVjdGl2ZSBNYXRob3V4Ii4gQXUgcHJvZ3JhbW1lIDogbGEgY2hpY2hhLCBsYSByZW1vbnRhZGEsIEpvc8OpIE1vdXJpbmhvIGV0IHRvdXMgbGVzIGRvc3NpZXJzIHRyb3VibGVzIGRlIHNhIGNhcnJpw6hyZS4=",
+   "channel_id": "CanalPlusFoot.fr",
+   "start_timestamp": "1792680180",
+   "stop_timestamp": "1792682580"
+  },
+  {
+   "id": "396854",
+   "epg_id": "203",
+   "title": "V2Vla2x5IFVFTCAvIFVFQ0wgTWFnYXppbmU=",
+   "lang": "",
+   "start": "2026-10-22 17:23:00",
+   "end": "2026-10-22 18:15:00",
+   "description": "TWFnYXppbmUgVUVGQSBkw6lkacOpIGF1eCBDb3VwZXMgZCdFdXJvcGUgOiBmb2N1cyBzdXIgVG9ycmVlbnNlIChEMiBwb3J0dWdhaXNlKSBldCBTdW5kZXJsYW5kIGVuIExpZ3VlIEV1cm9wYSwgTWrDpGxsYnkgZW4gTGlndWUgQ29uZsOpcmVuY2UuIFLDqWNpdHMgw6ltb3V2YW50cyBkZSBsZXVycyBkw6lidXRzIGhpc3RvcmlxdWVzLCByw6lzdWx0YXRzIGNsw6lzIGRvbnQgSnV2ZS1DZWx0YSBldCBNaWxhbi1TYWx6Ym91cmcu",
+   "channel_id": "CanalPlusFoot.fr",
+   "start_timestamp": "1792682580",
+   "stop_timestamp": "1792685700"
+  }
+ ]
+}

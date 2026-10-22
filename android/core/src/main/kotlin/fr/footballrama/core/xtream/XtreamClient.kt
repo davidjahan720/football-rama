@@ -75,6 +75,10 @@ data class XtreamLimits(
     val maxCategoriesBytes: Long = 5L * 1024 * 1024,
     val maxStreams: Int = 200_000,
     val maxCategories: Int = 20_000,
+    /** get_short_epg : quelques dizaines de programmes, quelques Ko en pratique. */
+    val maxShortEpgBytes: Long = 256L * 1024,
+    /** get_simple_data_table : guide complet d'une chaine (plusieurs jours). */
+    val maxSimpleDataTableBytes: Long = 2L * 1024 * 1024,
 )
 
 /**
@@ -155,17 +159,44 @@ class XtreamClient(
         }
 
     /**
+     * Guide d'UNE chaine : `player_api.php?action=get_short_epg&stream_id=..&limit=..` (programme en cours puis
+     * suivants). Repli quand xmltv.php est vide. Reponse bornee a [XtreamLimits.maxShortEpgBytes].
+     */
+    fun getShortEpg(account: XtreamAccount, streamId: Long, limit: Int): List<EpgListing> {
+        val url = apiUrl(account, "get_short_epg").newBuilder()
+            .addQueryParameter("stream_id", streamId.toString())
+            .addQueryParameter("limit", limit.coerceIn(1, MAX_SHORT_EPG_LIMIT).toString())
+            .build()
+        return execute(url, SHORT_EPG_CALL_TIMEOUT_S) { body -> ShortEpgParser.parse(readText(body, limits.maxShortEpgBytes)) }
+    }
+
+    /** Variante plus complete (meme structure `epg_listings`), proposee par la plupart des panels. */
+    fun getSimpleDataTable(account: XtreamAccount, streamId: Long): List<EpgListing> {
+        val url = apiUrl(account, "get_simple_data_table").newBuilder()
+            .addQueryParameter("stream_id", streamId.toString())
+            .build()
+        return execute(url, SHORT_EPG_CALL_TIMEOUT_S) { body -> ShortEpgParser.parse(readText(body, limits.maxSimpleDataTableBytes)) }
+    }
+
+    /**
      * Telecharge xmltv.php en flux vers [dest] (decompresse si gzip), sans jamais charger le document en memoire.
      * @param onProgress (octets recus, taille annoncee ou -1) ; peut lever une exception pour annuler.
+     * @param callTimeoutSeconds duree maximale de l'appel complet (court quand le fournisseur est connu
+     *   pour renvoyer un fichier vide).
      * @return taille ecrite.
      */
-    fun downloadEpg(account: XtreamAccount, dest: File, onProgress: ((Long, Long) -> Unit)? = null): Long {
+    fun downloadEpg(
+        account: XtreamAccount,
+        dest: File,
+        callTimeoutSeconds: Long = EPG_CALL_TIMEOUT_S,
+        onProgress: ((Long, Long) -> Unit)? = null,
+    ): Long {
         val url = account.serverUrl.newBuilder()
             .addPathSegment("xmltv.php")
             .addQueryParameter("username", account.username)
             .addQueryParameter("password", account.password)
             .build()
-        return execute(url, EPG_CALL_TIMEOUT_S) { body ->
+        return execute(url, callTimeoutSeconds.coerceAtLeast(1)) { body ->
             val total = body.contentLength
             val raw = LimitedInputStream(body.stream, limits.maxEpgBytes) { n -> onProgress?.invoke(n, total) }
             val out = try {
@@ -199,6 +230,14 @@ class XtreamClient(
     // ------------------------------------------------------------------ interne
 
     private class Body(val stream: InputStream, val contentLength: Long)
+
+    private fun readText(body: Body, maxBytes: Long): String =
+        try {
+            LimitedInputStream(maybeGunzip(LimitedInputStream(body.stream, maxBytes), maxBytes), maxBytes).readBytes()
+                .toString(Charsets.UTF_8)
+        } catch (_: ZipException) {
+            throw XtreamException(XtreamException.Kind.INVALID_RESPONSE)
+        }
 
     private fun apiUrl(account: XtreamAccount, action: String): HttpUrl =
         account.serverUrl.newBuilder()
@@ -313,7 +352,9 @@ class XtreamClient(
     companion object {
         private const val API_CALL_TIMEOUT_S = 120L
         private const val AUTH_MAX_BYTES = 1024L * 1024
-        private const val EPG_CALL_TIMEOUT_S = 15 * 60L
+        const val EPG_CALL_TIMEOUT_S = 15 * 60L
+        private const val SHORT_EPG_CALL_TIMEOUT_S = 30L
+        private const val MAX_SHORT_EPG_LIMIT = 500
         private val JSON = Json { ignoreUnknownKeys = true; isLenient = false }
     }
 }

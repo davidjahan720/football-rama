@@ -21,7 +21,8 @@ sealed interface RefreshState {
     /** [lastData] = dernier resultat valide, a afficher avec un bandeau d'erreur. */
     data class Error(val type: RefreshError, val lastData: MatchReport?) : RefreshState
 
-    enum class Step { FIXTURES, CHANNELS, EPG_DOWNLOAD, EPG_PARSE, MATCHING }
+    /** [EPG_CHANNELS] : repli "guide chaine par chaine" quand xmltv.php est vide ou illisible. */
+    enum class Step { FIXTURES, CHANNELS, EPG_DOWNLOAD, EPG_PARSE, EPG_CHANNELS, MATCHING }
 
     enum class Warning {
         /** Le calendrier distant n'a pas pu etre verifie (reseau, CDN incoherent) : calendrier en cache utilise. */

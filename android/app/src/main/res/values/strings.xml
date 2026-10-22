@@ -95,6 +95,7 @@
     <string name="step_channels">récupération de vos chaînes</string>
     <string name="step_epg_download">téléchargement du guide TV</string>
     <string name="step_epg_parse">analyse du guide TV</string>
+    <string name="step_epg_channels">guide TV chaîne par chaîne</string>
     <string name="step_matching">recherche des chaînes</string>
     <string name="loading_step">Mise à jour en cours : %1$s</string>
     <string name="loading_step_percent">Mise à jour en cours : %1$s (%2$d %%)</string>
@@ -158,6 +159,9 @@
     <!-- Réglages -->
     <string name="settings_title">Réglages</string>
     <string name="settings_last_update">Dernière mise à jour</string>
+    <string name="settings_epg_source">Source du guide : %1$s</string>
+    <string name="epg_source_xmltv">fichier complet</string>
+    <string name="epg_source_channels">chaîne par chaîne</string>
     <string name="settings_never">Jamais</string>
     <string name="settings_refresh_now">Actualiser maintenant</string>
     <string name="sign_out">Se déconnecter</string>
