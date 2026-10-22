@@ -18,8 +18,15 @@ import java.util.concurrent.TimeUnit
 class RefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val repository = (applicationContext as FootballRamaApp).container.matchRepository
-        return when (val state = repository.refresh()) {
+        val container = (applicationContext as FootballRamaApp).container
+        // Mise a jour de l'app : au plus 1 verification / 12 h ; un echec n'affecte pas le rafraichissement.
+        try {
+            container.updateManager.checkIfDue()
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (_: Exception) {
+        }
+        return when (val state = container.matchRepository.refresh()) {
             is RefreshState.Error ->
                 if (state.type.retryable && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
             else -> Result.success()

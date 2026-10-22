@@ -56,24 +56,7 @@ class FixturesVerifier(
      * @throws FixturesException
      */
     fun verify(json: ByteArray, signature: ByteArray, previousGeneratedAt: Instant?): Fixtures {
-        if (verifiers.isEmpty()) throw FixturesException(FixturesException.Reason.NO_PUBLIC_KEY)
-        if (json.size > MAX_JSON_BYTES || signature.size > MAX_SIG_BYTES) {
-            throw FixturesException(FixturesException.Reason.TOO_LARGE)
-        }
-        val sig = try {
-            Base64.getDecoder().decode(String(signature, Charsets.US_ASCII).trim())
-        } catch (_: IllegalArgumentException) {
-            throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
-        }
-        if (sig.size != Ed25519Verify.SIGNATURE_LEN) throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
-        val valid = verifiers.any { v ->
-            try {
-                v.verify(sig, json); true
-            } catch (_: GeneralSecurityException) {
-                false
-            }
-        }
-        if (!valid) throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
+        verifySignature(json, signature, MAX_JSON_BYTES)
 
         // Parsing seulement apres verification : on ne traite pas de donnees non authentifiees.
         val doc = try {
@@ -90,6 +73,32 @@ class FixturesVerifier(
             throw FixturesException(FixturesException.Reason.ROLLBACK)
         }
         return fixtures
+    }
+
+    /**
+     * Verifie seulement la signature Ed25519 des octets exacts [data] (une des cles acceptees).
+     * Reutilise pour update.json (meme cle, meme format de .sig). Aucun parsing avant cet appel.
+     * @throws FixturesException NO_PUBLIC_KEY, TOO_LARGE ou BAD_SIGNATURE
+     */
+    fun verifySignature(data: ByteArray, signature: ByteArray, maxDataBytes: Int) {
+        if (verifiers.isEmpty()) throw FixturesException(FixturesException.Reason.NO_PUBLIC_KEY)
+        if (data.size > maxDataBytes || signature.size > MAX_SIG_BYTES) {
+            throw FixturesException(FixturesException.Reason.TOO_LARGE)
+        }
+        val sig = try {
+            Base64.getDecoder().decode(String(signature, Charsets.US_ASCII).trim())
+        } catch (_: IllegalArgumentException) {
+            throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
+        }
+        if (sig.size != Ed25519Verify.SIGNATURE_LEN) throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
+        val valid = verifiers.any { v ->
+            try {
+                v.verify(sig, data); true
+            } catch (_: GeneralSecurityException) {
+                false
+            }
+        }
+        if (!valid) throw FixturesException(FixturesException.Reason.BAD_SIGNATURE)
     }
 
     private fun toDomain(doc: FixturesDocument): Fixtures {

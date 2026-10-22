@@ -119,6 +119,9 @@ fun SettingsScreen(
             uaMessage?.let { (res, ok) -> Banner(kind = if (ok) BannerKind.INFO else BannerKind.ERROR, text = stringResource(res)) }
 
             Spacer(Modifier.height(4.dp))
+            UpdateSection()
+
+            Spacer(Modifier.height(4.dp))
             FrButton(stringResource(R.string.sign_out), onClick = { confirmSignOut = true })
             Spacer(Modifier.height(8.dp))
         }

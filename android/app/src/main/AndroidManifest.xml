@@ -4,6 +4,8 @@
 
     <!-- Seule permission : acces reseau (serveur IPTV de l'utilisateur + fichier de calendrier signe). -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Mise a jour de l'app hors Play Store (APK signe, verifie par SHA-256 signe, confirmee par l'utilisateur). -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Android TV (Formuler Z11 Pro) sans exclure les autres appareils. -->
     <uses-feature android:name="android.software.leanback" android:required="false" />
@@ -32,6 +34,11 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Statut de l'installation d'une mise a jour (PendingIntent explicite de PackageInstaller) : NON exporte. -->
+        <receiver
+            android:name=".update.UpdateInstallReceiver"
+            android:exported="false" />
 
         <!-- Durcissement : recepteurs exportes de bibliotheques (proteges par DUMP, reserves au debogage adb)
              retires. Seul SystemJobService (WorkManager, protege par BIND_JOB_SERVICE) reste exporte en plus

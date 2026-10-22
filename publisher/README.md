@@ -38,6 +38,19 @@ Codes retour : `0` publié, `1` échec API ou publication (aucun fichier écrit,
 
 Un jour sans match produit un fichier valide avec `"matches": []`.
 
+## Manifeste de mise à jour de l'app (`update.json`)
+
+`app_release.json` (dans ce dossier, versionné) décrit la dernière release de l'APK. Il est mis à jour par `scripts/publish_release.ps1`. Contrat : section « update.json » de [`docs/CONTRAT_FIXTURES.md`](../docs/CONTRAT_FIXTURES.md).
+
+```powershell
+# Validation seule (aucune clé nécessaire) :
+.\.venv\Scripts\python.exe -m football_rama_publisher check-update --manifest app_release.json
+# Publication signée (même clé que le calendrier, lue dans FIXTURES_SIGNING_KEY) :
+.\.venv\Scripts\python.exe -m football_rama_publisher publish-update --manifest app_release.json --out dist/ --verify-key "<clé publique base64>"
+```
+
+Fichier absent ou placeholder (`"sha256": ""`) : rien n'est publié, code retour `0`. Manifeste invalide : rien n'est signé, code retour `1`.
+
 ## Alias d'équipes
 
 Les surnoms absents de football-data (PSG, Barça, Spurs…) sont dans [`football_rama_publisher/aliases.json`](football_rama_publisher/aliases.json). Clé = nom normalisé sans mots vides ni année de fondation ; valeurs déjà normalisées. Le fichier est validé au chargement et par les tests : lancer `pytest` après chaque modification.

@@ -168,4 +168,26 @@
     <string name="mention_neutral">Football Rama est un outil neutre : il ne fournit, ne diffuse et ne lit aucune chaîne ni aucune vidéo. Il indique seulement quelles chaînes de votre propre abonnement IPTV diffusent les matchs, d’après le guide TV de votre fournisseur.</string>
     <string name="mention_privacy">Aucune donnée n’est envoyée à un serveur Football Rama. Vos identifiants sont chiffrés sur cet appareil et ne sont transmis qu’au serveur de votre fournisseur. Le calendrier des matchs est un fichier public signé, téléchargé sans identifiant ni information de compte.</string>
     <string name="mention_attribution_intro">Calendrier des matchs :</string>
+
+    <!-- Mise à jour de l’application -->
+    <string name="app_update_title">Mise à jour de l’application</string>
+    <string name="app_update_current">Version installée : %1$s</string>
+    <string name="app_update_check">Rechercher une mise à jour</string>
+    <string name="app_update_checking">Recherche d’une mise à jour…</string>
+    <string name="app_update_up_to_date">L’application est à jour.</string>
+    <string name="app_update_available">Mise à jour %1$s disponible</string>
+    <string name="app_update_size">Taille : %1$s Mo</string>
+    <string name="app_update_install">Installer</string>
+    <string name="app_update_retry">Réessayer</string>
+    <string name="app_update_downloading">Téléchargement de la mise à jour : %1$d %%</string>
+    <string name="app_update_verifying">Vérification de l’intégrité du fichier…</string>
+    <string name="app_update_installing">Installation en cours : confirmez sur l’écran qui s’affiche.</string>
+    <string name="app_update_needs_permission">Autorisez Football Rama à installer des applications inconnues dans l’écran qui vient de s’ouvrir, puis revenez et appuyez de nouveau sur « Installer ».</string>
+    <string name="app_update_error_network">Téléchargement de la mise à jour impossible. Vérifiez la connexion Internet et réessayez.</string>
+    <string name="app_update_error_integrity">Le fichier téléchargé ne correspond pas à la version officielle : il a été supprimé et n’a pas été installé.</string>
+    <string name="app_update_error_storage">Espace de stockage insuffisant pour installer la mise à jour.</string>
+    <string name="app_update_error_install">L’installation a échoué. Réessayez, ou installez la nouvelle version avec l’application Downloader.</string>
+    <string name="app_update_error_blocked">L’installation a été bloquée par l’appareil. Autorisez Football Rama à installer des applications inconnues.</string>
+    <string name="app_update_error_permission_screen">Impossible d’ouvrir le réglage des sources inconnues. Autorisez Football Rama dans Paramètres, rubrique Sécurité.</string>
+    <string name="app_update_banner">Mise à jour %1$s disponible : installez-la depuis les réglages.</string>
 </resources>
