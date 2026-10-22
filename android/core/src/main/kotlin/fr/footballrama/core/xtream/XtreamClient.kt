@@ -22,6 +22,8 @@ import java.io.InputStream
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import java.util.zip.GZIPInputStream
 import java.util.zip.ZipException
@@ -65,7 +67,12 @@ data class LiveCategory(val id: String, val name: String)
 data class LiveStream(val streamId: Long, val name: String, val epgChannelId: String?, val categoryId: String?)
 
 /** Erreur reseau/serveur SANS URL, identifiants ni cause chainee (le message de la cause peut contenir l'URL). */
-class XtreamException(val kind: Kind, val httpCode: Int = 0) : Exception("xtream error: $kind${if (httpCode > 0) " $httpCode" else ""}") {
+class XtreamException(
+    val kind: Kind,
+    val httpCode: Int = 0,
+    /** En-tete Retry-After (secondes) d'une reponse 429/503, null si absent ou illisible. */
+    val retryAfterSeconds: Long? = null,
+) : Exception("xtream error: $kind${if (httpCode > 0) " $httpCode" else ""}") {
     enum class Kind { NETWORK, TIMEOUT, TLS, AUTH, HTTP, SERVER, TOO_LARGE, INVALID_RESPONSE, CANCELLED, STORAGE }
 }
 
@@ -272,9 +279,18 @@ class XtreamClient(
             r.isSuccessful -> Unit
             code == 401 || code == 403 -> throw XtreamException(XtreamException.Kind.AUTH, code)
             code in 300..399 -> throw XtreamException(XtreamException.Kind.HTTP, code) // ex. HTTPS -> HTTP refuse
-            code >= 500 -> throw XtreamException(XtreamException.Kind.SERVER, code)
-            else -> throw XtreamException(XtreamException.Kind.HTTP, code)
+            code >= 500 -> throw XtreamException(XtreamException.Kind.SERVER, code, retryAfter(r))
+            else -> throw XtreamException(XtreamException.Kind.HTTP, code, retryAfter(r))
         }
+    }
+
+    /** Retry-After en secondes ("120") ou en date HTTP ; borne a 7 jours. */
+    private fun retryAfter(r: Response): Long? {
+        val v = r.header("Retry-After")?.trim()?.takeIf { it.isNotEmpty() && it.length < 64 } ?: return null
+        val seconds = v.toLongOrNull() ?: runCatching {
+            ZonedDateTime.parse(v, DateTimeFormatter.RFC_1123_DATE_TIME).toEpochSecond() - System.currentTimeMillis() / 1000
+        }.getOrNull() ?: return null
+        return seconds.coerceIn(0, 7 * 24 * 3600L)
     }
 
     private fun map(e: Throwable): XtreamException = when {

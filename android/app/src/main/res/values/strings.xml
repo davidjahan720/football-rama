@@ -114,6 +114,9 @@
     <string name="updated_on">Mis à jour le %1$s</string>
     <string name="saved_data_line">Données enregistrées · %1$s</string>
     <string name="showing_previous_data">Données précédentes affichées · %1$s</string>
+    <string name="error_rate_limited">Votre fournisseur limite les demandes : nouvel essai plus tard.</string>
+    <string name="error_rate_limited_until">Votre fournisseur limite les demandes : nouvel essai après %1$s.</string>
+    <string name="warning_provider_limited">Votre fournisseur limite les demandes : guide TV incomplet, nouvel essai après %1$s.</string>
     <string name="warning_fixtures_cache">Le calendrier n’a pas pu être vérifié à l’instant : la dernière version valide est utilisée.</string>
     <string name="retry">Réessayer</string>
     <string name="change_account">Modifier mes identifiants</string>

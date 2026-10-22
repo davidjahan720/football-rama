@@ -67,16 +67,19 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
             val cached = repository.cachedReport()
             if (_report.value == null) _report.value = cached
             val last = cached?.updatedAtMillis?.let(Instant::ofEpochMilli)
-            if (repository.state.value !is RefreshState.Loading && shouldAutoRefresh(last, Instant.now())) refresh()
+            if (repository.state.value !is RefreshState.Loading && shouldAutoRefresh(last, Instant.now())) {
+                container.appScope.launch { repository.refresh() } // automatique : repli limite a 1 fois / 6 h
+            }
         }
     }
 
     /**
      * Lance un rafraichissement dans la portee de l'application (il continue si l'ecran change).
      * Le depot ignore la demande si un resultat de moins d'une minute existe (protection du serveur IPTV).
+     * Demande explicite (bouton) : le repli chaine par chaine peut tourner, dans le respect du "pas avant".
      */
     fun refresh() {
-        container.appScope.launch { repository.refresh() }
+        container.appScope.launch { repository.refresh(manual = true) }
     }
 
     fun setCountryFilter(key: String?) {

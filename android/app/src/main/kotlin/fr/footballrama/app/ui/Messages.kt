@@ -25,6 +25,7 @@ object Messages {
         RefreshError.TOO_LARGE -> R.string.error_too_large
         RefreshError.EPG_INVALID -> R.string.error_epg_invalid
         RefreshError.EPG_EMPTY -> R.string.error_epg_empty
+        RefreshError.RATE_LIMITED -> R.string.error_rate_limited
         RefreshError.FIXTURES_UNAVAILABLE -> R.string.error_fixtures_unavailable
         RefreshError.FIXTURES_EXPIRED -> R.string.error_fixtures_expired
         RefreshError.STORAGE -> R.string.error_storage
